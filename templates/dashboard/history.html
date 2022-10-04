@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %} History {% endblock title %}
+{% block content %}
+    <div class="container">
+      <div class="row my-4">
+        <div class="col-md-12">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item active" aria-current="page"><a href="/dashboard/home">Dashboard</a></li>
+              <li class="breadcrumb-item active" aria-current="page">History</li>
+            </ol>
+          </nav>
+        </div>
+        <div class="col-md-3">
+          {% include "snippets/dashboard-nav.html" %}
+        </div>
+        <div class="col-md-9">
+          <div class="card">
+            <div class="card-header">
+              <h5>History of Datasets You've Uploaded</h5>
+            </div>
+            <div class="card-body">
+              <div class="row text-center">
+                <div class="col-md-4">
+                  <i class="bi-file-earmark-text" style="font-size: 4rem;"></i>
+                  <h6>data_set_92921.xlsx</h6>
+                </div>
+                <div class="col-md-4">
+                  <i class="bi-file-earmark-text" style="font-size: 4rem;"></i>
+                  <h6>credit_set_92921.xlsx</h6>
+                </div>
+                <div class="col-md-4">
+                  <i class="bi-file-earmark-text" style="font-size: 4rem;"></i>
+                  <h6>housing_set_92921.xlsx</h6>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock content %}
+

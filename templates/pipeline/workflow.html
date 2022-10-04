@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% block title %} Pipeline{% endblock title %}
+{% block content %}
+<div class="container">
+  <div class="row my-4">
+    <div class="col-md-12 mb-3">
+      <h5>Dataset Title: Hosuing Market Analysis</h5>
+      <p class="text-muted">Real estate economics is the application of economic techniques to real estate markets. It tries to describe, explain, and predict patterns of prices, supply, and demand. The closely related field of housing economics is narrower in scope, concentrating on residential real estate markets, while the research on real estate trends focuses on the business and structural changes affecting the industry. Both draw on partial equilibrium analysis (supply and demand), urban economics, spatial economics, basic and extensive research, surveys, and finance. </p>
+    </div>
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="d-flex justify-content-between">
+            <div>
+              Cleaning Phase
+            </div>
+            <div>
+              <button class="btn btn-primary">Remove Duplicates</button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th scope="col">SN</th>
+                <th scope="col">name</th>
+                <th scope="col">age</th>
+                <th scope="col">weight</th>
+                <th scope="col">income</th>
+                <th scope="col">...</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">1</th>
+                <td>Mark</td>
+                <td>21</td>
+                <td>47.4</td>
+                <td>80000</td>
+                <td>...</td>
+              </tr>
+              <tr>
+                <th scope="row">1</th>
+                <td>Steve</td>
+                <td>21</td>
+                <td>47.4</td>
+                <td>80000</td>
+                <td>...</td>
+              </tr>
+              <tr>
+                <th scope="row">1</th>
+                <td>Patel</td>
+                <td>21</td>
+                <td>47.4</td>
+                <td>80000</td>
+                <td>...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row my-4">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          Scaling
+        </div>
+        <div class="card-body">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+            <label class="form-check-label" for="flexRadioDefault1">
+              MinMax Scaler
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+            <label class="form-check-label" for="flexRadioDefault2">
+              Log Scale
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row my-4">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          Feature Engineering
+        </div>
+        <div class="card-body">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+            <label class="form-check-label" for="flexRadioDefault1">
+              Logistic Regression
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+            <label class="form-check-label" for="flexRadioDefault2">
+              Select from Model and Logistic Regression
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row my-4">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          Train Models
+        </div>
+        <div class="card-body">
+          Select Algorithms
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row my-4">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          Predict Unseen Data
+        </div>
+        <div class="card-body">
+          <div class="mb-3 row">
+            <label for="staticEmail" class="col-sm-2 col-form-label">age</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="mb-3 row">
+            <label for="inputPassword" class="col-sm-2 col-form-label">weight</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="inputPassword">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row my-4">
+    <div class="col-md-12">
+      Based on the predictions:
+      The above mentioned characteristics will have following possibility of income:
+      <h2 class="text-success">$120,022.12</h2>
+    </div>
+  </div>
+</div>
+{% endblock content %}

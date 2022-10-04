@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %} Upload - Dashboard {% endblock %}
+{% block content %}
+<div class="container">
+<div class="row my-4">
+        <div class="col-md-12">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item active" aria-current="page">
+                <a href="/dashboard/home">Dashboard</a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">
+                Upload Dataset
+              </li>
+            </ol>
+          </nav>
+        </div>
+  <div class="col-md-3">
+    {% include "snippets/dashboard-nav.html" %}
+  </div>
+  <div class="col-md-9">
+    <div class="card">
+      <div class="card-header">
+        <h5>Work with New Dataset</h5>
+      </div>
+      <div class="card-body">
+
+        <div class="mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Title of the Dataset</label>
+          <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Provide title for your dataset">
+        </div>
+        <div class="text-center">
+          <button type="button" class="btn btn-light my-5 btn-lg">Upload New Dataset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}

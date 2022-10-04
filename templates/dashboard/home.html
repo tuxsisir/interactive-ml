@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %} Home {% endblock title %}
+{% block content %}
+<div class="container">
+<div class="row my-4">
+        <div class="col-md-12">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item active disabled" aria-current="page"><a href="/dashboard/home">Dashboard</a></li>
+            </ol>
+          </nav>
+        </div>
+  <div class="col-md-3">
+    {% include "snippets/dashboard-nav.html" %}
+  </div>
+  <div class="col-md-9">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card p-2" style="text-align: right;">
+          <h2 class="text-success">4</h2>
+          Completed
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card p-2" style="text-align: right;">
+          <h2 class="text-danger">2</h2>
+          Drafts
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card p-2" style="text-align: right;">
+          <h2 class="text-warning">1</h2>
+          In Progress
+        </div>
+      </div>
+      <div class="col-md-12 my-4">
+        <div class="card">
+          <div class="card-header">
+            Work in Progress
+          </div>
+          <div class="card-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Dataset</th>
+                  <th scope="col">Progress</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">1</th>
+                  <td><a href="/pipeline">Bostong Housing Market</a></td>
+                  <td>87%</td>
+                </tr>
+                <tr>
+                  <th scope="row">2</th>
+                  <td><a href="/pipeline">Wine Quality</a></td>
+                  <td>12%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock content %}
+
