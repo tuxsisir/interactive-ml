@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %} Explore {% endblock title %}
+{% block content %}
+    <div class="container">
+      <div class="row my-4">
+        <div class="col-md-12">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item active" aria-current="page"><a href="/dashboard/home">Dashboard</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Explore</li>
+            </ol>
+          </nav>
+        </div>
+        <div class="col-md-3">
+          {% include "snippets/dashboard-nav.html" %}
+        </div>
+        <div class="col-md-9">
+          <div class="card">
+            <div class="card-header">
+              <h5>Explore More Datasets</h5>
+              <small class="text-muted">Here are curated links of platforms where you can get and start working with the dataset.</small>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-4 mb-4">
+                  <img src="https://archive.ics.uci.edu/ml/assets/logo.gif" height="80">
+                </div>
+                <div class="col-md-8 mb-4">
+                  <a href="https://archive.ics.uci.edu/ml/datasets.php">https://archive.ics.uci.edu/ml/datasets.php</a>
+                </div>
+                <div class="col-md-12"><hr></div>
+                <div class="col-md-4">
+                  <img src="https://www.kaggle.com/static/images/site-logo.svg" height="100">
+                </div>
+                <div class="col-md-8">
+                  <a href="https://www.kaggle.com/datasets">https://www.kaggle.com/datasets</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock content %}

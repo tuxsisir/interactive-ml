@@ -1,0 +1,22 @@
+{% extends "pipeline/pipeline_base.html" %}
+{% block pipeline_content %}
+<div class="card">
+  <div class="card-header">
+    Feature Engineering
+  </div>
+  <div class="card-body">
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+      <label class="form-check-label" for="flexRadioDefault1">
+        Logistic Regression
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+      <label class="form-check-label" for="flexRadioDefault2">
+        Select from Model and Logistic Regression
+      </label>
+    </div>
+  </div>
+</div>
+{% endblock pipeline_content %}

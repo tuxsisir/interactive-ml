@@ -1,2 +1,10 @@
 Flask
 flask-sqlalchemy
+Flask-Migrate
+psycopg2
+flask-shell-ipython
+
+pandas
+flask-humanize
+matplotlib
+sklearn

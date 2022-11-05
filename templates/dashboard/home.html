@@ -17,47 +17,63 @@
     <div class="row">
       <div class="col-md-4">
         <div class="card p-2" style="text-align: right;">
-          <h2 class="text-success">4</h2>
+          <h2 class="text-success">{{ counts.completed }}</h2>
           Completed
         </div>
       </div>
       <div class="col-md-4">
         <div class="card p-2" style="text-align: right;">
-          <h2 class="text-danger">2</h2>
+          <h2 class="text-danger">{{ counts.draft }}</h2>
           Drafts
         </div>
       </div>
       <div class="col-md-4">
         <div class="card p-2" style="text-align: right;">
-          <h2 class="text-warning">1</h2>
+          <h2 class="text-warning">{{ counts.in_progress }}</h2>
           In Progress
         </div>
       </div>
       <div class="col-md-12 my-4">
         <div class="card">
           <div class="card-header">
-            Work in Progress
+            <h5>Work in Progress</h5>
+            <small class="text-muted">Here are all the datasets that you've uploaded in the application.</small>
           </div>
           <div class="card-body">
             <table class="table">
               <thead>
                 <tr>
-                  <th scope="col">#</th>
+                  <th scope="col" width="10%">#</th>
+                  <th scope="col">Title</th>
                   <th scope="col">Dataset</th>
-                  <th scope="col">Progress</th>
+                  <th scope="col">Stats</th>
+                  <th scope="col">Status</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <th scope="row">1</th>
-                  <td><a href="/pipeline">Bostong Housing Market</a></td>
-                  <td>87%</td>
-                </tr>
-                <tr>
-                  <th scope="row">2</th>
-                  <td><a href="/pipeline">Wine Quality</a></td>
-                  <td>12%</td>
-                </tr>
+                {% for obj in projects %}
+                  <tr>
+                    <th scope="row">{{ obj.id }}</th>
+                    <td>
+                      <a class="font-weight-bold" href="{{ url_for('pipeline.pipeline_detail_cleaning', id=obj.id) }}">{{ obj.title }}</a>
+                      <small class="d-block text-muted">
+                        {{ obj.description[:10] }}...
+                      </small>
+                    </td>
+                    <td>
+                      {{ obj.filename }}
+                    </td>
+                    <td>
+                      <div>50% Completed</div>
+                      <small class="text-muted">Created: {{ obj.created_at|humanize() }}</small>
+                    </td>
+                    <td>{{ obj.status }}</td>
+                  </tr>
+                {% else %}
+                  <tr>
+                    <td colspan="3">No data found.</td>
+                  </tr>
+                {% endfor %}
               </tbody>
             </table>
           </div>

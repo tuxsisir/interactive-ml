@@ -3,35 +3,70 @@
 {% block content %}
 <div class="container">
 <div class="row my-4">
-        <div class="col-md-12">
-          <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item active" aria-current="page">
-                <a href="/dashboard/home">Dashboard</a>
-              </li>
-              <li class="breadcrumb-item active" aria-current="page">
-                Upload Dataset
-              </li>
-            </ol>
-          </nav>
-        </div>
+  <div class="col-md-12">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item active" aria-current="page">
+          <a href="/dashboard/home">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          Upload Dataset
+        </li>
+      </ol>
+    </nav>
+  </div>
   <div class="col-md-3">
     {% include "snippets/dashboard-nav.html" %}
   </div>
   <div class="col-md-9">
     <div class="card">
+      {% if not project %}
       <div class="card-header">
         <h5>Work with New Dataset</h5>
+        <small class="text-muted">You can create and upload a new dataset and start working on it immediately.</small>
       </div>
+      {% else %}
+      <div class="card-header">
+        <h5>Edit Dataset Information</h5>
+        <small class="text-muted">Edit information based on the dataset.</small>
+      </div>
+      {% endif %}
       <div class="card-body">
+        <form
+            method="POST"
+            action="{% if not project %}/dashboard/upload{% else %}/{{project.id}}/edit-project{% endif %}" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label for="title-dateset" class="form-label">Title of the Dataset</label>
+            <input type="text" class="form-control" name="title" id="title-dataset" value="{% if
+                              project %}{{ project.title }}{% endif %}" placeholder="Please provide title for your dataset">
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Description of the Dataset</label>
+            <textarea class="form-control"
+                      id="description" name="description" rows="3"
+                                      placeholder="Please provide description for the dataset">{% if project %}{{ project.description }}{% endif %}</textarea>
+          </div>
+          {% if not project %}
+          <div class="mb-5">
+            <label for="formFile" class="form-label">Attach Dataset</label>
+            <input class="form-control" type="file" name="file" id="formFile">
+          </div>
+          {% endif %}
+          <div class="d-grid gap-2 col-6 mx-auto">
+            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+              <input type="radio" class="btn-check" name="btnradio" id="btnradio1" value="Draft" autocomplete="off" checked>
+              <label class="btn btn-outline-danger" for="btnradio1">Draft</label>
 
-        <div class="mb-3">
-          <label for="exampleFormControlInput1" class="form-label">Title of the Dataset</label>
-          <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Provide title for your dataset">
-        </div>
-        <div class="text-center">
-          <button type="button" class="btn btn-light my-5 btn-lg">Upload New Dataset</button>
-        </div>
+              <input type="radio" class="btn-check" name="btnradio" id="btnradio3" value="In Progress" autocomplete="off">
+              <label class="btn btn-outline-warning" for="btnradio3">In Progress</label>
+
+              <input type="radio" class="btn-check" name="btnradio" id="btnradio2" value="Completed" autocomplete="off">
+              <label class="btn btn-outline-success" for="btnradio2">Completed</label>
+            </div>
+          </div>
+          <hr class="my-4">
+          <input type="submit" class="btn btn-secondary btn-md" value="Save Changes">
+        </form>
       </div>
     </div>
   </div>

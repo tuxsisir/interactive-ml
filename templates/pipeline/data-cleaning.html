@@ -1,0 +1,73 @@
+{% extends "pipeline/pipeline_base.html" %}
+{% block pipeline_content %}
+<div class="card">
+  <div class="card-header">
+    <div class="d-flex justify-content-between">
+      <div>
+        <h5>Data Cleaning Phase</h5>
+        <small class="text-muted">In this phase you can perform basic operations on cleaning the dataset such as
+          removing duplicate values, filling values with mean on null values of the dataset as well
+          as removing the columns which are not needed.</small>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-9">
+        <h6>Dataset Preview <em>(Showing 5 rows of {{ shape[0] }})</em></h6>
+        <div class="table-responsive">
+          {{ dataset|safe }}
+        </div>
+        <hr>
+        <h6>
+          Rows: {{ shape[0] }} - Columns: {{ shape[1] }}
+        </h6>
+        <hr>
+        <h5>Cleanups</h5>
+        <div class="d-flex">
+          <div class="mx-3">
+            Replace Null Values with:
+          </div>
+          <div>
+            <select class="form-select">
+              <option value="1">Mean value of the column</option>
+              <option value="2">Median value of the column</option>
+            </select>
+          </div>
+        </div>
+        <hr>
+        <div class="d-flex">
+          <div class="mx-3">
+            Remove rows with null values:
+          </div>
+          <div>
+            <select class="form-select">
+              <option value="1">Yes</option>
+              <option value="2">No</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+      <div class="col-md-3">
+        <h5>Columns in the Dataset</h5>
+        <hr>
+        {% for column in columns %}
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="{{ column }}" id="id_{{ column }}" checked>
+          <label class="form-check-label" for="id_{{ column }}">
+            {{ column }}
+          </label>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="card-footer">
+    <div class="d-flex justify-content-between">
+      <button class="btn btn-secondary btn-sm" disabled><i class="icon bi-arrow-left-circle mx-1"></i>Previous</button>
+      <button class="btn btn-success btn-sm text-white">Next<i class="icon bi-arrow-right-circle mx-1"></i></button>
+    </div>
+  </div>
+</div>
+{% endblock pipeline_content %}

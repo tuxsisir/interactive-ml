@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block title %} Edit Profile - Dashboard {% endblock %}
+{% block content %}
+<div class="container">
+<div class="row my-4">
+  <div class="col-md-12">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item active" aria-current="page">
+          <a href="/dashboard/home">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          Edit Profile
+        </li>
+      </ol>
+    </nav>
+  </div>
+  <div class="col-md-3">
+    {% include "snippets/dashboard-nav.html" %}
+  </div>
+  <div class="col-md-9">
+    <div class="card">
+      <div class="card-header">
+        <h5>Edit Profile</h5>
+      </div>
+      <div class="card-body">
+        <form method="POST" action="/user/edit-profile" enctype="multipart/form-data">
+          <div class="row">
+            <div class="mb-3 col-md-6">
+              <label for="first_name" class="form-label">First Name</label>
+              <input type="text"
+                     class="form-control"
+                     name="first_name"
+                     id="first_name"
+                     value="{{ user.first_name }}"
+                     placeholder="Please provide your first name.">
+            </div>
+            <div class="mb-3 col-md-6">
+              <label for="last_name" class="form-label">Last Name</label>
+              <input type="text"
+                     class="form-control"
+                     name="last_name"
+                     id="last_name"
+                     value="{{ user.last_name }}"
+                     placeholder="Please provide your last name.">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="phone" class="form-label">Phone Number</label>
+            <input type="text"
+                   class="form-control"
+                   name="phone"
+                   id="phone"
+                   value="{{ user.phone }}"
+                   placeholder="Please provide your last name.">
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="text"
+                   class="form-control"
+                   name="email"
+                   id="email"
+                   value="{{ user.email }}"
+                   placeholder="Please provide your email address.">
+          </div>
+          <div class="mb-3">
+            <label for="designation" class="form-label">Designation</label>
+            <input type="text"
+                   class="form-control"
+                   name="designation"
+                   id="designation"
+                   value="{{ user.designation }}"
+                   placeholder="Please provide your designation.">
+          </div>
+          <hr class="my-4">
+          <input type="submit" class="btn btn-secondary btn-md" value="Save Changes">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}

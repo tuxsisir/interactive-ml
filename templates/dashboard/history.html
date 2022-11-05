@@ -18,21 +18,16 @@
           <div class="card">
             <div class="card-header">
               <h5>History of Datasets You've Uploaded</h5>
+              <small class="text-muted">Here are all the datasets that you've uploaded in the application.</small>
             </div>
             <div class="card-body">
               <div class="row text-center">
+                {% for obj in history %}
                 <div class="col-md-4">
-                  <i class="bi-file-earmark-text" style="font-size: 4rem;"></i>
-                  <h6>data_set_92921.xlsx</h6>
+                  <i class="bi-file-earmark-text text-muted" style="font-size: 4rem;"></i>
+                  <h6>{{ obj.filename }}</h6>
                 </div>
-                <div class="col-md-4">
-                  <i class="bi-file-earmark-text" style="font-size: 4rem;"></i>
-                  <h6>credit_set_92921.xlsx</h6>
-                </div>
-                <div class="col-md-4">
-                  <i class="bi-file-earmark-text" style="font-size: 4rem;"></i>
-                  <h6>housing_set_92921.xlsx</h6>
-                </div>
+                {% endfor %}
               </div>
             </div>
           </div>

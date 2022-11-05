@@ -1,11 +1,36 @@
 {% extends 'base.html' %}
 {% block title %} Login {% endblock %}
 {% block content %}
-  <div class="row">
-    <div class="col-md-6 offset-md-3 text-center">
-      <a href="/dashboard/home">
-      <button type="button" class="btn btn-primary my-5 btn-lg">Login with Twitter</button>
-      </a>
+  <div class="row" style="border: 1px solid #efefef; border-radius: 10px; margin: 32px 220px; padding: 10px;">
+    <div class="col-md-6 text-center">
+      <img src="{{ url_for('static', filename='images/interactive.png') }}" style="width: 100%"></i>
+    </div>
+    <div class="col-md-6">
+      <h4 class="text-center">Welcome to Interactive Machine Learning Pipeline</h4>
+      <hr>
+      <small class="d-block">
+       <i class="icon bi-check-circle-fill" style="color: green; font-size: 1.2rem;"></i>
+       Upload your dataset and work on your Machine Learning pipeline interactively via web
+       platform.
+      </small>
+      <small class="d-block my-4">
+       <i class="icon bi-check-circle-fill" style="color: green; font-size: 1.2rem;"></i>
+       Share and work with other like minded data analysts to make your work finest in less time.
+      </small>
+      <small class="d-block">
+       <i class="icon bi-check-circle-fill" style="color: green; font-size: 1.2rem;"></i>
+       Students are able to understand ML pipeline better.
+      </small>
+      <small class="d-block my-4">
+       <i class="icon bi-check-circle-fill" style="color: green; font-size: 1.2rem;"></i>
+       We are team of students who are aiming for simplyfying Machine Learning pipeline process.
+      </small>
+      <div class="text-center">
+        <a href="/dashboard/home" class="text-center">
+          <button type="button" class="btn btn-primary my-1 btn-lg" style="background: #1E9BF0;
+            border-color: white;"><i class="icon bi-twitter mx-3"></i>Login with Twitter</button>
+        </a>
+      </div>
     </div>
   </div>
 {% endblock content %}

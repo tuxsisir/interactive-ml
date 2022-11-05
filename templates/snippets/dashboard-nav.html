@@ -1,8 +1,25 @@
   <div class="list-group">
-    <a href="/dashboard/home" class="list-group-item list-group-item-action py-3">Dashboard</a>
-    <a href="/dashboard/upload" class="list-group-item list-group-item-action py-3">Upload new Dataset</a>
-    <a href="/dashboard/history" class="list-group-item list-group-item-action py-3">History</a>
-    <a href="#" class="list-group-item list-group-item-action py-3">Explore more Datasets</a>
-    <a href="#" class="list-group-item list-group-item-action py-3">Work in Progress</a>
-    <a href="#" class="list-group-item list-group-item-action py-3">Logout</a>
+    <a href="/dashboard/home"
+       class="list-group-item list-group-item-action py-3 {% if active_dashboard == 'home' %}active-dashboard{% endif %}">
+      <i class="icon bi-boxes"></i>
+      Home
+    </a>
+    <a href="/dashboard/upload"
+      class="list-group-item list-group-item-action py-3 {% if active_dashboard == 'upload' %}active-dashboard{% endif %}">
+      <i class="icon bi-cloud-plus" style="font-size: 1.5rem;"></i>
+      Upload new Dataset</a>
+    <a href="/dashboard/history"
+      class="list-group-item list-group-item-action py-3 {% if active_dashboard == 'history' %}active-dashboard{% endif %}">
+      <i class="icon bi-journal-arrow-down"></i>
+      History</a>
+    <a href="/dashboard/explore" class="list-group-item list-group-item-action py-3">
+      <i class="icon bi-lightbulb"></i>
+      Explore more Datasets</a>
+    <a href="/user/edit-profile"
+      class="list-group-item list-group-item-action py-3 {% if active_dashboard == 'edit-profile' %}active-dashboard{% endif %}">
+      <i class="icon bi-pencil-square"></i>
+      Edit Profile</a>
+    <a href="/" class="list-group-item list-group-item-action py-3">
+      <i class="icon bi-power"></i>
+      Logout</a>
   </div>
