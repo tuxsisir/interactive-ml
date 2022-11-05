@@ -1,3 +1,4 @@
+import os
 import uuid
 
 from datetime import datetime
@@ -9,6 +10,7 @@ from sqlalchemy import desc
 
 from werkzeug.utils import secure_filename
 
+basedir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def generate_id():
     return uuid.uuid4().hex
@@ -81,7 +83,9 @@ def dashboard_upload():
             return render_template('dashboard/upload.html', form_errors=form_errors,
                     active_dashboard="upload")
         secure_file_name = secure_filename(file.filename)
-        file.save(f'uploads/datasets/{secure_file_name}')
+
+        # file.save(os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename))
+        file.save(os.path.join(basedir, 'uploads/datasets', secure_file_name))
         ml_project = MLProject(
                 created_at=datetime.now(),
                 created_by=1,
