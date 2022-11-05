@@ -3,7 +3,7 @@ import uuid
 from datetime import datetime
 
 from flask import Blueprint, render_template, redirect, request, url_for
-from ..models import MLProject
+from models import MLProject
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc
 

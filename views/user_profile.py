@@ -4,7 +4,7 @@ from datetime import datetime
 from flask import Blueprint, render_template, redirect, request
 from flask_sqlalchemy import SQLAlchemy
 
-from ..models import User
+from models import User
 
 user_profile_blueprint = Blueprint('user_profile', __name__)
 

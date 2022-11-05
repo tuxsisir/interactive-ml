@@ -2,7 +2,7 @@ import pandas as pd
 from flask import Blueprint, render_template, redirect, request
 from flask_sqlalchemy import SQLAlchemy
 
-from ..models import MLProject
+from models import MLProject
 
 pipeline_blueprint = Blueprint('pipeline', __name__)
 

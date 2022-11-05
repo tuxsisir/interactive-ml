@@ -1,16 +1,20 @@
+import sys,os
+sys.path.append(os.getcwd())
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask import Blueprint, render_template, redirect, request, url_for
 
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy import create_engine
 
 from flask_humanize import Humanize
 
-from .models import db
-from .views.dashboard import dashboard_blueprint
-from .views.user_profile import user_profile_blueprint
-from .views.pipeline import pipeline_blueprint
+from models import db
+from views.dashboard import dashboard_blueprint
+from views.user_profile import user_profile_blueprint
+from views.pipeline import pipeline_blueprint
 
 
 def create_app():
