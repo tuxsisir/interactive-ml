@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from flask import Blueprint, render_template, redirect, request
 from flask_sqlalchemy import SQLAlchemy
@@ -7,6 +8,7 @@ from models import MLProject
 pipeline_blueprint = Blueprint('pipeline', __name__)
 
 db = SQLAlchemy()
+basedir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 @pipeline_blueprint.route('/',methods = ['GET'])
 def pipeline_demo():
@@ -16,7 +18,7 @@ def pipeline_demo():
 @pipeline_blueprint.route('<int:id>/cleaning',methods = ['GET'])
 def pipeline_detail_cleaning(id):
     project = db.session.query(MLProject).get(id)
-    df = pd.read_csv(f'uploads/datasets/{project.filename}')
+    df = pd.read_csv(os.path.join(basedir, 'uploads/datasets', project.filename))
     head = df.head()
     summary = df.describe()
     return render_template(
@@ -35,7 +37,7 @@ def pipeline_detail_eda(id):
     Exploratory Data Analysis
     """
     project = db.session.query(MLProject).get(id)
-    df = pd.read_csv(f'uploads/datasets/{project.filename}')
+    df = pd.read_csv(os.path.join(basedir, 'uploads/datasets', project.filename))
     head = df.head()
     summary = df.describe()
     # df.hist()
@@ -53,7 +55,7 @@ def pipeline_detail_eda(id):
 @pipeline_blueprint.route('<int:id>/scaling',methods = ['GET'])
 def pipeline_detail_scaling(id):
     project = db.session.query(MLProject).get(id)
-    df = pd.read_csv(f'uploads/datasets/{project.filename}')
+    df = pd.read_csv(os.path.join(basedir, 'uploads/datasets', project.filename))
     head = df.head()
     try:
         df.drop(columns='dteday', inplace=True)
@@ -77,7 +79,7 @@ def pipeline_detail_scaling(id):
 @pipeline_blueprint.route('<int:id>/features',methods = ['GET'])
 def pipeline_detail_features(id):
     project = db.session.query(MLProject).get(id)
-    df = pd.read_csv(f'uploads/datasets/{project.filename}')
+    df = pd.read_csv(os.path.join(basedir, 'uploads/datasets', project.filename))
     head = df.head()
     return render_template(
             'pipeline/feature-engineering.html',
