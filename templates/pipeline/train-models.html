@@ -5,7 +5,109 @@
     Train Models
   </div>
   <div class="card-body">
-    Select Algorithms
+    <h5>Train / Test Splits</h5>
+    <code class="my-3">
+      X_train, X_test, y_train, y_test = train_test_split(X_lsvc, y, test_size=0.25, random_state=42)
+    </code>
+    <div class="d-flex">
+      <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label"><i>Test Size</i></label>
+        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="0.25">
+      </div>
+      <div class="mb-3 mx-2">
+        <label for="exampleFormControlInput1" class="form-label"><i>Random State</i></label>
+        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="42">
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-md-6">
+        <h5>
+          Configure and apply Classifiers:
+        </h5>
+        {% for classifier in classifiers %}
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="checkbox" name="classifier" id="{{ classifier }}">
+          <label class="form-check-label" for="{{ classifier }}">
+            {{ classifier }}
+          </label>
+        </div>
+        {% endfor %}
+        <div>
+          <h6>KNeighborsClassifier</h6>
+          <hr>
+          <h6>GaussianNB()</h6>
+          <hr>
+          <h6>DecisionTreeClassifier(max_depth=5)</h6>
+          <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label"><i>Max Depth</i></label>
+            <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="5">
+          </div>
+          <hr>
+          <h6>RandomForestClassifier(n_estimators=500, max_depth=5, max_leaf_nodes=16)</h6>
+          <div class="d-flex">
+            <div class="mb-3">
+              <label for="exampleFormControlInput1" class="form-label"><i>n_estimators</i></label>
+              <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="500">
+            </div>
+            <div class="mb-3">
+              <label for="exampleFormControlInput1" class="form-label"><i>Max Depth</i></label>
+              <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="5">
+            </div>
+            <div class="mb-3">
+              <label for="exampleFormControlInput1" class="form-label"><i>Max Leaf Nodes</i></label>
+              <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="16">
+            </div>
+          </div>
+          <hr>
+          <h6>AdaBoostClassifier()</h6>
+          <hr>
+          <h6>XGBClassifier(base_score=0.5, max_depth=5, use_label_encoder=False, validate_parameters=1)</h6>
+          <div class="d-flex">
+            <div class="mb-3">
+              <label for="exampleFormControlInput1" class="form-label"><i>base score</i></label>
+              <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="0.5">
+            </div>
+            <div class="mb-3">
+              <label for="exampleFormControlInput1" class="form-label"><i>Max Depth</i></label>
+              <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="5">
+            </div>
+            <div class="mb-3">
+              <label for="exampleFormControlInput1" class="form-label"><i>Validate Parameters</i></label>
+              <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="1">
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-primary">Run and Review Scores</button>
+      </div>
+      <div class="col-md-6">
+        <h5>
+          Review Model Scores:
+        </h5>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Classifier</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for classifier in classifiers %}
+            <tr class="table-success">
+              <td>{{ classifier }}</td>
+              <td>0.00</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer">
+    <div class="d-flex justify-content-between">
+      <button class="btn btn-secondary btn-sm" disabled><i class="icon bi-arrow-left-circle mx-1"></i>Previous</button>
+      <button class="btn btn-success btn-sm text-white">Next<i class="icon bi-arrow-right-circle mx-1"></i></button>
+    </div>
   </div>
 </div>
 {% endblock pipeline_content %}

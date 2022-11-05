@@ -2,20 +2,130 @@
 {% block pipeline_content %}
 <div class="card">
   <div class="card-header">
-    Feature Engineering
+    Feature Selection and Scaling
   </div>
   <div class="card-body">
-    <div class="form-check">
-      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-      <label class="form-check-label" for="flexRadioDefault1">
-        Logistic Regression
-      </label>
+    <div class="row">
+      <div class="col-md-8">
+        <h5>Defining Predictors and Outcome features</h5>
+        <i class="d-block mb-3">Select one feature to mark it as a predictor.</i>
+        {% for column in columns %}
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="predictor" id="{{ column }}">
+          <label class="form-check-label" for="{{ column }}">
+            {{ column }}
+          </label>
+        </div>
+        {% endfor %}
+        <button class="my-3 btn btn-sm btn-outline-primary d-block">Mark as predictor</button>
+        <hr>
+        <p>There are <strong>{{ shape[1] - 1 }}</strong> features in the dataset, where all of them are not necessary and we
+          can strip down the features to handful important required features only.</p>
+        <hr>
+        <u class="d-block mb-4">Least no. of features from applied algorithms:</u>
+        <h6>Using SelectFromModel and LogisticRegression</h6>
+        <div class="d-flex align-items-center">
+          <div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="final_features" id="using">
+            </div>
+          </div>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>feature 1</th>
+                <th>feature 2</th>
+                <th>feature 3</th>
+                <th>feature 4</th>
+                <th>feature 5</th>
+                <th>feature 6</th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+        <h6>Linear SVM</h6>
+        <div class="alert alert-success p-2" role="alert">
+          <strong>Recommended:</strong> Less features from Linear SVM compared to all other applied algorithms.
+        </div>
+        <div class="d-flex align-items-center">
+          <div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="final_features" id="using">
+            </div>
+          </div>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>feature 1</th>
+                <th>feature 2</th>
+                <th>feature 3</th>
+                <th>feature 4</th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+        <h6>SelectKBest</h6>
+        <div class="d-flex align-items-center">
+          <div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="final_features" id="using">
+            </div>
+          </div>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>feature 1</th>
+                <th>feature 2</th>
+                <th>feature 3</th>
+                <th>feature 4</th>
+                <th>feature 5</th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <h5>Apply Feature Selection Using Following Algorithms</h5>
+        <hr>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+          <label class="form-check-label" for="flexRadioDefault1">
+            Using SelectFromModel and LogisticRegression
+          </label>
+          <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label"><i>Max Iter Value</i></label>
+            <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="10000">
+          </div>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+          <label class="form-check-label" for="flexRadioDefault2">
+            Linear SVM
+          </label>
+          <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label"><i>Use Regularization Hyperparameter</i></label>
+            <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="0.01">
+          </div>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+          <label class="form-check-label" for="flexRadioDefault2">
+            SelectKBest
+          </label>
+          <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label"><i>No. of features to select</i></label>
+            <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="10">
+          </div>
+        </div>
+        <hr>
+        <button class="btn btn-sm btn-outline-primary">Apply and Generate Features</button>
+      </div>
     </div>
-    <div class="form-check">
-      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
-      <label class="form-check-label" for="flexRadioDefault2">
-        Select from Model and Logistic Regression
-      </label>
+  </div>
+  <div class="card-footer">
+    <div class="d-flex justify-content-between">
+      <button class="btn btn-secondary btn-sm" disabled><i class="icon bi-arrow-left-circle mx-1"></i>Previous</button>
+      <button class="btn btn-success btn-sm text-white">Next<i class="icon bi-arrow-right-circle mx-1"></i></button>
     </div>
   </div>
 </div>

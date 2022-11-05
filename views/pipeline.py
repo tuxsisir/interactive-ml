@@ -77,20 +77,26 @@ def pipeline_detail_scaling(id):
 @pipeline_blueprint.route('<int:id>/features',methods = ['GET'])
 def pipeline_detail_features(id):
     project = db.session.query(MLProject).get(id)
+    df = pd.read_csv(f'uploads/datasets/{project.filename}')
+    head = df.head()
     return render_template(
             'pipeline/feature-engineering.html',
             active_pipeline='features',
             progress=66.64,
-            project=project)
+            project=project,
+            columns=head.columns.to_list(),
+            shape=df.shape)
 
 
 @pipeline_blueprint.route('<int:id>/train-models',methods = ['GET'])
 def pipeline_detail_train(id):
     project = db.session.query(MLProject).get(id)
+    classifiers = ["KNN", "Naive Bayes", "Decision Tree", "Random Forest", "Ada BOOST", "XGBOOST"]
     return render_template(
             'pipeline/train-models.html',
             active_pipeline='train',
             progress=83.30,
+            classifiers=classifiers,
             project=project)
 
 
