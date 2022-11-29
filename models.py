@@ -1,10 +1,14 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
+from flask_login import UserMixin
 
 db = SQLAlchemy()
 
-class User(db.Model):
+
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     first_name = db.Column(db.String(255), nullable=False)
     last_name = db.Column(db.String(255), nullable=False)
@@ -15,7 +19,13 @@ class User(db.Model):
     projects = db.relationship('MLProject', backref='projects', lazy=True)
 
     def __repr__(self):
-        return '<User %r>' % self.first_name
+        return '<User %r>' % self.username
+
+
+class OAuth(OAuthConsumerMixin, db.Model):
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
+    user = db.relationship(User)
+
 
 class MLProject(db.Model):
     id = db.Column(db.Integer, primary_key=True)
