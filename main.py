@@ -1,9 +1,8 @@
 import sys,os
 sys.path.append(os.getcwd())
 
-from flask import Flask
+from flask import Flask, render_template, redirect, url_for, send_from_directory
 from flask_migrate import Migrate
-from flask import redirect, url_for
 
 from flask_humanize import Humanize
 
@@ -21,6 +20,18 @@ from sqlalchemy.orm.exc import NoResultFound
 
 login_manager = LoginManager()
 
+# root of the project
+basedir = os.path.dirname(os.path.abspath(__file__))
+
+def page_not_found(_):
+  return render_template('error-pages/404.html'), 404
+
+def unauthorized(_):
+  return render_template('error-pages/401.html'), 403
+
+def server_error(_):
+  return render_template('error-pages/500.html'), 500
+
 def create_app():
     app = Flask(__name__)
     # db_uri = 'postgresql://postgres:postgres@localhost:5432/mlflask'
@@ -34,6 +45,9 @@ def create_app():
     humanize = Humanize(app)
     app.jinja_env.filters['basename'] = humanize
     login_manager.init_app(app)
+    app.register_error_handler(404, page_not_found)
+    app.register_error_handler(401, unauthorized)
+    app.register_error_handler(500, server_error)
     return app
 
 app = create_app()

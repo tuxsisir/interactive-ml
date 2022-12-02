@@ -3,7 +3,8 @@ import uuid
 
 from datetime import datetime
 
-from flask import Blueprint, render_template, redirect, request, url_for
+from flask import Blueprint, render_template, redirect, request, session
+from flask_login import login_required
 from models import MLProject
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc
@@ -12,6 +13,7 @@ from werkzeug.utils import secure_filename
 
 basedir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+
 def generate_id():
     return uuid.uuid4().hex
 
@@ -19,6 +21,7 @@ def generate_id():
 dashboard_blueprint = Blueprint('dashboard', __name__)
 
 db = SQLAlchemy()
+
 
 @dashboard_blueprint.route("/")
 def index():
@@ -29,6 +32,7 @@ def index():
 
 
 @dashboard_blueprint.route("/dashboard/explore")
+@login_required
 def explore():
     """
     Explore page
@@ -37,21 +41,24 @@ def explore():
 
 
 @dashboard_blueprint.route("/dashboard/home")
+@login_required
 def dashboard():
-    res = db.session.query(MLProject).order_by(desc(MLProject.created_at)).all()
+    res = db.session.query(MLProject).order_by(
+        desc(MLProject.created_at)).all()
     counts = {
-            "draft": db.session.query(MLProject).filter_by(status = 'Draft').count(),
-            "completed": db.session.query(MLProject).filter_by(status = 'Completed').count(),
-            "in_progress": db.session.query(MLProject).filter_by(status = 'In Progress').count(),
-        }
+        "draft": db.session.query(MLProject).filter_by(status='Draft').count(),
+        "completed": db.session.query(MLProject).filter_by(status='Completed').count(),
+        "in_progress": db.session.query(MLProject).filter_by(status='In Progress').count(),
+    }
     return render_template(
-            'dashboard/home.html',
-            active_dashboard="home",
-            counts=counts,
-            projects=res)
+        'dashboard/home.html',
+        active_dashboard="home",
+        counts=counts,
+        projects=res)
 
 
-@dashboard_blueprint.route('/<int:id>/edit-project',methods = ['GET', 'POST'])
+@dashboard_blueprint.route('/<int:id>/edit-project', methods=['GET', 'POST'])
+@login_required
 def dashboard_edit_project(id):
     project = db.session.query(MLProject).get(id)
     if request.method == 'POST':
@@ -61,13 +68,14 @@ def dashboard_edit_project(id):
         db.session.commit()
         return redirect('/dashboard/home')
     return render_template(
-            'dashboard/upload.html',
-            active_dashboard="upload",
-            edit=True,
-            project=project)
+        'dashboard/upload.html',
+        active_dashboard="upload",
+        edit=True,
+        project=project)
 
 
 @dashboard_blueprint.route("/dashboard/upload", methods=["POST", "GET"])
+@login_required
 def dashboard_upload():
     """
     Dashboard upload dataset
@@ -81,19 +89,19 @@ def dashboard_upload():
         if not all([title, description, file]):
             form_errors['error'] = 'All fields are required.'
             return render_template('dashboard/upload.html', form_errors=form_errors,
-                    active_dashboard="upload")
+                                   active_dashboard="upload")
         secure_file_name = secure_filename(file.filename)
 
         # file.save(os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename))
         file.save(os.path.join(basedir, 'uploads/datasets', secure_file_name))
         ml_project = MLProject(
-                created_at=datetime.now(),
-                created_by=1,
-                title=title,
-                description=description,
-                filename=secure_file_name,
-                filename_preferred='',
-                status=status)
+            created_at=datetime.now(),
+            created_by=session['_user_id'],
+            title=title,
+            description=description,
+            filename=secure_file_name,
+            filename_preferred='',
+            status=status)
         db.session.add(ml_project)
         db.session.commit()
         return redirect('/dashboard/home')
@@ -101,10 +109,11 @@ def dashboard_upload():
 
 
 @dashboard_blueprint.route("/dashboard/history")
+@login_required
 def dashboard_history():
-    res = db.session.query(MLProject).order_by(desc(MLProject.created_at)).all()
+    res = db.session.query(MLProject).order_by(
+        desc(MLProject.created_at)).all()
     return render_template(
-            'dashboard/history.html',
-            history=res,
-            active_dashboard="history")
-
+        'dashboard/history.html',
+        history=res,
+        active_dashboard="history")

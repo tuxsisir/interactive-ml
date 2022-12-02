@@ -9,7 +9,7 @@
       <div>
         <a href="{{ url_for('dashboard.dashboard_edit_project', id=project.id) }}"><button class="btn btn-outline-success btn-sm">Edit</button></a>
         <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalDelete">Delete</button>
-        <button class="btn btn-outline-secondary btn-sm">Share</button>
+        <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#modalPreviewDataset">Preview All Dataset</button>
       </div>
     </div>
     <div class="col-md-12">
@@ -69,6 +69,26 @@
     </div>
   </div>
   <div class="row my-4">
+  </div>
+  <div class="modal modal-xl" id="modalPreviewDataset" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form>
+          <div class="modal-header">
+            <h5 class="modal-title">Preview Dataset</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="table-responsive">
+              {{ all_df|safe }}
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
   <div class="modal" id="modalDelete" tabindex="-1">
     <div class="modal-dialog">

@@ -1,61 +1,89 @@
 import os
+import matplotlib.pyplot as plt
 import pandas as pd
-from flask import Blueprint, render_template, redirect, request
+
+from pathlib import Path
+from flask import Blueprint, render_template, redirect, request, session, abort
 from flask_sqlalchemy import SQLAlchemy
 
 from models import MLProject
+
+# ML models
+import seaborn as sns
+import matplotlib
+matplotlib.use('Agg')
 
 pipeline_blueprint = Blueprint('pipeline', __name__)
 
 db = SQLAlchemy()
 basedir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-@pipeline_blueprint.route('/',methods = ['GET'])
+
+@pipeline_blueprint.route('/', methods=['GET'])
 def pipeline_demo():
     return render_template('pipeline/workflow.html')
 
 
-@pipeline_blueprint.route('<int:id>/cleaning',methods = ['GET'])
+@pipeline_blueprint.route('<int:id>/cleaning', methods=['GET'])
 def pipeline_detail_cleaning(id):
     project = db.session.query(MLProject).get(id)
-    df = pd.read_csv(os.path.join(basedir, 'uploads/datasets', project.filename))
+    df = pd.read_csv(os.path.join(
+        basedir, 'static/uploads/datasets', project.filename))
     head = df.head()
     summary = df.describe()
     return render_template(
-            'pipeline/data-cleaning.html',
-            project=project,
-            dataset=head.to_html(classes=('table table-hover'), table_id='dataset-table'),
-            columns=head.columns.to_list(),
-            progress=16.66,
-            active_pipeline='cleaning',
-            shape=df.shape)
+        'pipeline/data-cleaning.html',
+        project=project,
+        dataset=head.to_html(classes=('table table-hover'),
+                             table_id='dataset-table'),
+        columns=head.columns.to_list(),
+        progress=16.66,
+        active_pipeline='cleaning',
+        all_df=df.to_html(classes=('table table-hover table-responsive')),
+        shape=df.shape)
 
 
-@pipeline_blueprint.route('<int:id>/eda',methods = ['GET'])
+@pipeline_blueprint.route('<int:id>/eda', methods=['GET'])
 def pipeline_detail_eda(id):
     """
     Exploratory Data Analysis
     """
+    current_user = session['twitter_oauth_token']['screen_name']
     project = db.session.query(MLProject).get(id)
-    df = pd.read_csv(os.path.join(basedir, 'uploads/datasets', project.filename))
+    if not project:
+        abort(404)
+    df = pd.read_csv(os.path.join(
+        basedir, 'static/uploads/datasets', project.filename))
+
     head = df.head()
     summary = df.describe()
-    # df.hist()
+
+    sns.displot(df['medv'])
+    plt.title('Medv Distribution')
+    # create path if it doesnot exists
+    plot_url = f"static/uploads/plots/{current_user}"
+    Path(basedir, plot_url).mkdir(parents=True, exist_ok=True)
+    plt.savefig(os.path.join(basedir, plot_url, 'hist.png'),
+                dpi=300, bbox_inches='tight', pad_inches=0.3)
+
     return render_template(
-            'pipeline/eda.html',
-            project=project,
-            dataset=head.to_html(classes=('table')),
-            columns=head.columns.to_list(),
-            active_pipeline='eda',
-            summary=summary.to_html(classes=('table table-hover'), table_id='dataset-table'),
-            progress=33.32,
-            shape=df.shape)
+        'pipeline/eda.html',
+        project=project,
+        dataset=head.to_html(classes=('table')),
+        columns=head.columns.to_list(),
+        active_pipeline='eda',
+        summary=summary.to_html(
+            classes=('table table-hover'), table_id='dataset-table'),
+        progress=33.32,
+        hist_plot=f"/hist.png",
+        shape=df.shape)
 
 
-@pipeline_blueprint.route('<int:id>/scaling',methods = ['GET'])
+@pipeline_blueprint.route('<int:id>/scaling', methods=['GET'])
 def pipeline_detail_scaling(id):
     project = db.session.query(MLProject).get(id)
-    df = pd.read_csv(os.path.join(basedir, 'uploads/datasets', project.filename))
+    df = pd.read_csv(os.path.join(
+        basedir, 'static/uploads/datasets', project.filename))
     head = df.head()
     try:
         df.drop(columns='dteday', inplace=True)
@@ -69,45 +97,47 @@ def pipeline_detail_scaling(id):
     feature_mm = feature_mm.reset_index(drop=True)
     feature_mm = feature_mm.head()
     return render_template(
-            'pipeline/data-scaling.html',
-            active_pipeline='scaling',
-            progress=49.98,
-            scaled_dataset=feature_mm.to_html(classes=('table table-hover'), table_id='dataset-table'),
-            project=project)
+        'pipeline/data-scaling.html',
+        active_pipeline='scaling',
+        progress=49.98,
+        scaled_dataset=feature_mm.to_html(
+            classes=('table table-hover'), table_id='dataset-table'),
+        project=project)
 
 
-@pipeline_blueprint.route('<int:id>/features',methods = ['GET'])
+@pipeline_blueprint.route('<int:id>/features', methods=['GET'])
 def pipeline_detail_features(id):
     project = db.session.query(MLProject).get(id)
-    df = pd.read_csv(os.path.join(basedir, 'uploads/datasets', project.filename))
+    df = pd.read_csv(os.path.join(
+        basedir, 'static/uploads/datasets', project.filename))
     head = df.head()
     return render_template(
-            'pipeline/feature-engineering.html',
-            active_pipeline='features',
-            progress=66.64,
-            project=project,
-            columns=head.columns.to_list(),
-            shape=df.shape)
+        'pipeline/feature-engineering.html',
+        active_pipeline='features',
+        progress=66.64,
+        project=project,
+        columns=head.columns.to_list(),
+        shape=df.shape)
 
 
-@pipeline_blueprint.route('<int:id>/train-models',methods = ['GET'])
+@pipeline_blueprint.route('<int:id>/train-models', methods=['GET'])
 def pipeline_detail_train(id):
     project = db.session.query(MLProject).get(id)
-    classifiers = ["KNN", "Naive Bayes", "Decision Tree", "Random Forest", "Ada BOOST", "XGBOOST"]
+    classifiers = ["KNN", "Naive Bayes", "Decision Tree",
+                   "Random Forest", "Ada BOOST", "XGBOOST"]
     return render_template(
-            'pipeline/train-models.html',
-            active_pipeline='train',
-            progress=83.30,
-            classifiers=classifiers,
-            project=project)
+        'pipeline/train-models.html',
+        active_pipeline='train',
+        progress=83.30,
+        classifiers=classifiers,
+        project=project)
 
 
-@pipeline_blueprint.route('<int:id>/predict',methods = ['GET'])
+@pipeline_blueprint.route('<int:id>/predict', methods=['GET'])
 def pipeline_detail_predict(id):
     project = db.session.query(MLProject).get(id)
     return render_template(
-            'pipeline/predict.html',
-            active_pipeline='predict',
-            progress=100,
-            project=project)
-
+        'pipeline/predict.html',
+        active_pipeline='predict',
+        progress=100,
+        project=project)

@@ -26,6 +26,15 @@
       <div class="card-body">
         <form method="POST" action="/user/edit-profile" enctype="multipart/form-data">
           <div class="row">
+            <div class="mb-3 col-md-12">
+              <label for="username" class="form-label">Twitter Username</label>
+              <input type="text"
+                     class="form-control"
+                     name="username"
+                     id="username"
+                     value="{{ current_user.username }}"
+                     disabled>
+            </div>
             <div class="mb-3 col-md-6">
               <label for="first_name" class="form-label">First Name</label>
               <input type="text"
@@ -71,6 +80,13 @@
                    id="designation"
                    value="{{ user.designation }}"
                    placeholder="Please provide your designation.">
+            <input type="text"
+                   class="form-control"
+                   hidden
+                   name="id"
+                   id="id"
+                   disabled
+                   value="{{ current_user.id }}">
           </div>
           <hr class="my-4">
           <input type="submit" class="btn btn-secondary btn-md" value="Save Changes">
