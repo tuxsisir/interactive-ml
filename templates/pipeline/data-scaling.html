@@ -16,25 +16,37 @@
       <div class="col-md-3">
         <h5>Choose Scaler</h5>
         <hr>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked>
-          <label class="form-check-label" for="flexRadioDefault1">
-            MinMax Scaler
-            <small>If you are transforming a feature, its non distorting</small>
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
-          <label class="form-check-label" for="flexRadioDefault2">
-            Robust Scaler
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
-          <label class="form-check-label" for="flexRadioDefault2">
-            Standard Scaler
-          </label>
-        </div>
+        <form action="{{ url_for('pipeline.pipeline_detail_scaling', id=project.id) }}" method="POST">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="scaler" value="minmax" id="scaler_minmax" {% if required_scaler == 'minmax' %}checked{% endif %}>
+            <label class="form-check-label" for="scaler_minmax">
+              MinMax Scaler
+              <small class="d-block">If you are transforming a feature, its non distorting</small>
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="scaler" value="robust" id="scaler_robust" {% if required_scaler == 'robust' %}checked{% endif %}>
+            <label class="form-check-label" for="scaler_robust">
+              Robust Scaler
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="scaler" value="standard" id="scaler_standard" {% if required_scaler == 'standard' %}checked{% endif %}>
+            <label class="form-check-label" for="scaler_standard">
+              Standard Scaler
+              <small class="d-block">all features will have mean of 0 and SD of 1</small>
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="reset_scaling" id="reset_scaling">
+            <label class="form-check-label" for="reset_scaling">
+              Reset Scaling
+              <small class="d-block">Revert any scaling applied</small>
+            </label>
+          </div>
+          <hr>
+          <button type="submit" class="btn btn-sm btn-primary">Apply Scaling</button>
+        </form>
       </div>
     </div>
   </div>

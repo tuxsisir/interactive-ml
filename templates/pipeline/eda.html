@@ -11,41 +11,60 @@
     <div class="row">
       <div class="col-md-9">
         <h5>Dataset Summary</h5>
+        {% if dataset_summary %}
         <div class="table-responsive">
           {{ summary|safe }}
         </div>
-        <img src="{{ url_for('static', filename='uploads/plots/samratsisir/hist.png') }}" height="400" width="400">
+        {% elif hist_summary %}
+        <div>
+          <img src="{{ url_for('static', filename=plot_url) }}" height="400" width="400" style="margin: 0 auto; display: block;">
+        </div>
+        {% elif correlation %}
+          <img src="{{ url_for('static', filename=plot_url) }}" height="700" width="700" style="margin: 0 auto; display: block;">
+        {% endif %}
       </div>
       <div class="col-md-3">
         <h5>Choose Visualization to Generate</h5>
         <hr>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="{{ column }}" id="id_{{ column }}" checked>
-          <label class="form-check-label" for="id_{{ column }}">
-            Dataset Summary
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="{{ column }}" id="id_{{ column }}">
-          <label class="form-check-label" for="id_{{ column }}">
-            Histogram
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="{{ column }}" id="id_{{ column }}">
-          <label class="form-check-label" for="id_{{ column }}">
-            Scatter Plot
-          </label>
-        </div>
-        <hr>
-        <button type="button" class="btn btn-outline-secondary btn-sm">Apply Changes</button>
+        <form method="POST" action="{{ url_for('pipeline.pipeline_detail_eda', id=project.id) }}">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="visualization" value="summary" id="id_summary" {% if dataset_summary %}checked{% endif %}>
+            <label class="form-check-label" for="id_summary">
+              Dataset Summary
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="visualization" value="histogram" id="id_histogram" {% if hist_summary %}checked{% endif %}>
+            <label class="form-check-label" for="id_histogram">
+              Histogram
+              <div class="ml-4">
+                {% for col in columns %}
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input custom" type="radio" name="hist_col" value="{{ col }}" id="id_{{ col }}" {% if col == hist_col %} checked {% endif %}>
+                    <label class="form-check-label" for="id_{{ col }}">{{ col }}</label>
+                  </div>
+                {% endfor %}
+              </div>
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="visualization" value="correlation" id="id_correlation" {% if correlation %}checked{% endif %}>
+            <label class="form-check-label" for="id_correlation">
+              Correlation
+            </label>
+          </div>
+          <hr>
+          <button type="submit" class="btn btn-primary btn-sm">Apply Changes</button>
+        </form>
       </div>
     </div>
   </div>
   <div class="card-footer">
     <div class="d-flex justify-content-between">
-      <button class="btn btn-secondary btn-sm" disabled><i class="icon bi-arrow-left-circle mx-1"></i>Previous</button>
-      <button class="btn btn-success btn-sm text-white">Next<i class="icon bi-arrow-right-circle mx-1"></i></button>
+      <a href="{{ url_for('pipeline.pipeline_detail_cleaning', id=project.id) }}" class="btn btn-secondary btn-sm" disabled>
+        <i class="icon bi-arrow-left-circle mx-1"></i>Previous</a>
+      <a href="{{ url_for('pipeline.pipeline_detail_scaling', id=project.id) }}" class="btn btn-success btn-sm text-white">
+        Next<i class="icon bi-arrow-right-circle mx-1"></i></a>
     </div>
   </div>
 </div>

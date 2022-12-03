@@ -30,6 +30,11 @@
         </div>
         <hr aria-orientation="horizontal" class="flex-grow-1 mx-2"/>
         <div>
+          <i class="icon pipeline-nav-icon bi-layers-half"></i>
+          <a class="pipeline-nav-link {% if active_pipeline == 'train-test' %}active{% endif %}" href="{{ url_for('pipeline.pipeline_detail_train_test', id=project.id) }}">Train Test Split</a>
+        </div>
+        <hr aria-orientation="horizontal" class="flex-grow-1 mx-2"/>
+        <div>
           <i class="icon pipeline-nav-icon bi-window-stack"></i>
           <a class="pipeline-nav-link {% if active_pipeline == 'features' %}active{% endif %}" href="{{ url_for('pipeline.pipeline_detail_features', id=project.id) }}">Feature Engineering</a>
         </div>
@@ -93,17 +98,18 @@
   <div class="modal" id="modalDelete" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
-        <form>
+        <form method="POST" action="/pipeline/delete">
           <div class="modal-header">
             <h5 class="modal-title">Confirm Deletion</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <p>Are you sure you want to delete this dataset you're working on?</p>
+            <input name="id" value="{{ project.id }}" hidden>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <button type="submit" class="btn btn-danger">Delete</button>
           </div>
         </form>
       </div>

@@ -46,8 +46,8 @@
             {% if current_user.is_authenticated %}
             <li class="nav-item">
               <em>{{ current_user.username }}</em>
-              <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle"
-                                                                         style="width: 40px;" alt="Avatar" />
+              <img src="https://cdn-icons-png.flaticon.com/512/124/124021.png" class="rounded-circle"
+                                                                               style="width: 40px;" alt="{{ current_user.username }}" />
             </li>
             <!--
               <li class="nav-item">
@@ -60,6 +60,15 @@
       </div>
     </nav>
     <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }} my-3" role="alert">
+        <span class="text-capitalize font-weight-bold">{% if category == 'danger' %}Error{% endif %}:</span> {{ message }}
+        </div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
       {% block content %}
       {% endblock %}
     </div>
@@ -79,5 +88,6 @@
         </ul>
       </footer>
     </div>
+    {% block js %}{% endblock js %}
   </body>
 </html>

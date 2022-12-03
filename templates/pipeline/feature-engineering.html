@@ -2,26 +2,73 @@
 {% block pipeline_content %}
 <div class="card">
   <div class="card-header">
-    Feature Selection and Scaling
+    Feature Selection
   </div>
+  <form action="{{ url_for('pipeline.pipeline_detail_features', id=project.id, learning=supervised_learning_task) }}" method="POST">
   <div class="card-body">
     <div class="row">
+      {% if not supervised_learning_task %}
+        <div class="col-md-6">
+          <a href="{{ url_for('pipeline.pipeline_detail_features', id=project.id, learning='regression')}}" style="text-decoration: none;">
+            <div class="card">
+              <div class="card-body" style="padding: 100px 130px;">
+                Regression
+                <small class="d-block">Supervised Learning task where output is having continuous value. </small>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-6">
+          <a href="{{ url_for('pipeline.pipeline_detail_features', id=project.id, learning='classification')}}" style="text-decoration: none;">
+            <div class="card">
+              <div class="card-body" style="padding: 100px 130px;">
+                Classification
+                <small class="d-block">Supervised Learning task where output is having defined labels(discrete value)</small>
+              </div>
+            </div>
+          </a>
+        </div>
+      {% else %}
+      <div class="col-md-6 mb-3">
+        <a href="{{ url_for('pipeline.pipeline_detail_features', id=project.id, learning='regression')}}" style="text-decoration: none;">
+          <div class="card {% if supervised_learning_task == 'regression' %}text-white bg-success{% endif %}">
+            <div class="card-body" style="padding: 20px 20px;">
+              Regression
+            </div>
+          </div>
+        </a>
+      </div>
+      <div class="col-md-6 mb-3">
+        <a href="{{ url_for('pipeline.pipeline_detail_features', id=project.id, learning='classification')}}" style="text-decoration: none;">
+          <div class="card {% if supervised_learning_task == 'classification' %}text-white bg-success{% endif %}">
+            <div class="card-body" style="padding: 20px 20px;">
+              Classification
+            </div>
+          </div>
+        </a>
+      </div>
+      <div class="col-md-12">
+        <hr>
+      </div>
       <div class="col-md-8">
         <h5>Defining Predictors and Outcome features</h5>
         <i class="d-block mb-3">Select one feature to mark it as a predictor.</i>
-        {% for column in columns %}
+        {% for col in columns %}
         <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio" name="predictor" id="{{ column }}">
-          <label class="form-check-label" for="{{ column }}">
-            {{ column }}
+          <input class="form-check-input" type="radio" name="predictor" id="{{ col }}" value="{{ col }}" {% if col == predictor %}checked{% endif %}>
+          <label class="form-check-label" for="{{ col }}">
+            {{ col }}
           </label>
         </div>
         {% endfor %}
-        <button class="my-3 btn btn-sm btn-outline-primary d-block">Mark as predictor</button>
+        <div class="table-responsive">
+          {{ active_dataset|safe }}
+        </div>
         <hr>
-        <p>There are <strong>{{ shape[1] - 1 }}</strong> features in the dataset, where all of them are not necessary and we
+        <p>There are <strong>{{ shape[1] }}</strong> features in the dataset, where all of them may not be necessary and we
           can strip down the features to handful important required features only.</p>
         <hr>
+        {% if supervised_learning_task == 'classification' %}
         <u class="d-block mb-4">Least no. of features from applied algorithms:</u>
         <h6>Using SelectFromModel and LogisticRegression</h6>
         <div class="d-flex align-items-center">
@@ -44,9 +91,11 @@
           </table>
         </div>
         <h6>Linear SVM</h6>
+        <!--
         <div class="alert alert-success p-2" role="alert">
           <strong>Recommended:</strong> Less features from Linear SVM compared to all other applied algorithms.
         </div>
+        -->
         <div class="d-flex align-items-center">
           <div>
             <div class="form-check form-check-inline">
@@ -83,45 +132,59 @@
             </thead>
           </table>
         </div>
+        {% elif supervised_learning_task == 'regression' %}
+        {{ regressor_features }}
+        <div id="myPieChart"></div>
+        {% endif %}
       </div>
       <div class="col-md-4">
         <h5>Apply Feature Selection Using Following Algorithms</h5>
-        <hr>
+        {% if supervised_learning_task == 'classification' %}
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
           <label class="form-check-label" for="flexRadioDefault1">
             Using SelectFromModel and LogisticRegression
           </label>
           <div class="mb-3">
             <label for="exampleFormControlInput1" class="form-label"><i>Max Iter Value</i></label>
-            <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="10000">
+            <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="10000">
           </div>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
           <label class="form-check-label" for="flexRadioDefault2">
             Linear SVM
           </label>
           <div class="mb-3">
             <label for="exampleFormControlInput1" class="form-label"><i>Use Regularization Hyperparameter</i></label>
-            <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="0.01">
+            <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="0.01">
           </div>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
           <label class="form-check-label" for="flexRadioDefault2">
             SelectKBest
           </label>
           <div class="mb-3">
             <label for="exampleFormControlInput1" class="form-label"><i>No. of features to select</i></label>
-            <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="10">
+            <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="10">
           </div>
         </div>
+        <div class="form-check">
+          <label class="form-check-label" for="flexRadioDefault2">
+            Classify Predictor
+          </label>
+          <div class="mb-3">
+            <label for="predictorThreshold" class="form-label"><i>Predictor Threshold</i></label>
+            <input type="text" class="form-control" id="predictorThreshold" placeholder="2">
+          </div>
+        </div>
+        {% endif %}
         <hr>
-        <button class="btn btn-sm btn-outline-primary">Apply and Generate Features</button>
+        <input type='text' value="{{ supervised_learning_task }}" name="learning" hidden>
+        <button type="submit" class="btn btn-sm btn-outline-primary">Apply and Generate Features</button>
       </div>
+      {% endif %}
     </div>
   </div>
+  </form>
   <div class="card-footer">
     <div class="d-flex justify-content-between">
       <button class="btn btn-secondary btn-sm" disabled><i class="icon bi-arrow-left-circle mx-1"></i>Previous</button>
@@ -130,3 +193,28 @@
   </div>
 </div>
 {% endblock pipeline_content %}
+
+{% block js %}
+
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+  <script>
+    google.charts.load('current', {packages: ['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+      // Define the chart to be drawn.
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Element');
+      data.addColumn('number', 'Percentage');
+      data.addRows([
+        ['Nitrogen', 0.78],
+        ['Oxygen', 0.21],
+        ['Other', 0.01]
+      ]);
+
+      // Instantiate and draw the chart.
+      var chart = new google.visualization.PieChart(document.getElementById('myPieChart'));
+      chart.draw(data, null);
+    }
+  </script>
+{% endblock js %}

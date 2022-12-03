@@ -34,8 +34,7 @@ def server_error(_):
 
 def create_app():
     app = Flask(__name__)
-    # db_uri = 'postgresql://postgres:postgres@localhost:5432/mlflask'
-    db_uri = 'sqlite:///db.sqlite3'
+    db_uri = 'postgresql://postgres:postgres@localhost:5432/mlflask'
     app.config.update({
         'SQLALCHEMY_DATABASE_URI': db_uri,
         'SQLALCHEMY_TRACK_MODIFICATIONS': False,

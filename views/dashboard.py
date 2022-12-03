@@ -3,7 +3,8 @@ import uuid
 
 from datetime import datetime
 
-from flask import Blueprint, render_template, redirect, request, session
+from pathlib import Path
+from flask import Blueprint, render_template, redirect, request, session, flash
 from flask_login import login_required
 from models import MLProject
 from flask_sqlalchemy import SQLAlchemy
@@ -86,21 +87,29 @@ def dashboard_upload():
         description = request.form.get('description', None)
         status = request.form.get('btnradio', None)
         file = request.files['file']
+        if file and file.mimetype != 'text/csv':
+            flash('Please upload csv datasets only.', 'danger')
+            return render_template('dashboard/upload.html', active_dashboard="upload")
         if not all([title, description, file]):
-            form_errors['error'] = 'All fields are required.'
-            return render_template('dashboard/upload.html', form_errors=form_errors,
-                                   active_dashboard="upload")
-        secure_file_name = secure_filename(file.filename)
+            flash('Please complete all fields including dataset.', 'danger')
+            return render_template('dashboard/upload.html', active_dashboard="upload")
 
-        # file.save(os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename))
-        file.save(os.path.join(basedir, 'uploads/datasets', secure_file_name))
+        secure_file_name = secure_filename(file.filename)  # to make the directory
+        original_file_name = secure_file_name.replace('.', '_original.')
+
+        current_user = session['twitter_oauth_token']['screen_name']
+        dataset_url = f"static/uploads/datasets/{current_user}/{secure_file_name.split('.')[0]}"
+
+        Path(basedir, dataset_url).mkdir(parents=True, exist_ok=True)
+
+        file.save(os.path.join(basedir, dataset_url, original_file_name))
         ml_project = MLProject(
             created_at=datetime.now(),
             created_by=session['_user_id'],
             title=title,
             description=description,
-            filename=secure_file_name,
-            filename_preferred='',
+            filename=original_file_name,
+            filename_preferred=secure_file_name.split('.')[0], # directory name
             status=status)
         db.session.add(ml_project)
         db.session.commit()

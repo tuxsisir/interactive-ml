@@ -39,8 +39,16 @@ body {
   text-align: center;
 }
 
-#dataset-table {
-  font-size: 0.8rem;
+.dataset-table {
+  font-size: 0.8rem !important;
+  margin-bottom: 0px;
+}
+.dataset-table > thead > tr {
+    text-align: left !important;
+}
+.form-check-input.custom:checked {
+  background-color: red;
+  border-color: red;
 }
 
 .pipeline-nav-link {
