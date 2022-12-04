@@ -3,8 +3,7 @@
 <div class="card">
   <div class="card-header">
     <h5>Data Scaling</h5>
-    <small class="text-muted">In this phase you can visualize heatmaps and other visualization based
-      on the dataset you've cleaned.</small>
+    <small class="text-muted">In this phase you can perform data scaling as scaling of the data makes it easy for a model to learn and understand the problem.</small>
   </div>
   <div class="card-body">
     <div class="row">
@@ -17,6 +16,9 @@
         <h5>Choose Scaler</h5>
         <hr>
         <form action="{{ url_for('pipeline.pipeline_detail_scaling', id=project.id) }}" method="POST">
+          <div class="alert alert-success">
+            Applied Scaling: {{ required_scaler }}
+          </div>
           <div class="form-check">
             <input class="form-check-input" type="radio" name="scaler" value="minmax" id="scaler_minmax" {% if required_scaler == 'minmax' %}checked{% endif %}>
             <label class="form-check-label" for="scaler_minmax">

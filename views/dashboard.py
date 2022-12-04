@@ -6,7 +6,7 @@ from datetime import datetime
 from pathlib import Path
 from flask import Blueprint, render_template, redirect, request, session, flash
 from flask_login import login_required
-from models import MLProject
+from models import MLProject, MLProjectConfig
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc
 
@@ -67,6 +67,8 @@ def dashboard_edit_project(id):
         project.description = request.form.get('description', None)
         project.status = request.form.get('btnradio', None)
         db.session.commit()
+        db.session.close()
+        flash('Successfully edited your project.', 'success')
         return redirect('/dashboard/home')
     return render_template(
         'dashboard/upload.html',
@@ -82,7 +84,6 @@ def dashboard_upload():
     Dashboard upload dataset
     """
     if request.method == 'POST':
-        form_errors = {}
         title = request.form.get('title', None)
         description = request.form.get('description', None)
         status = request.form.get('btnradio', None)
@@ -113,6 +114,15 @@ def dashboard_upload():
             status=status)
         db.session.add(ml_project)
         db.session.commit()
+        ml_project_config = MLProjectConfig(
+            created_at=datetime.now(),
+            ml_project=ml_project.id,
+            config={},
+            description='')
+        db.session.add(ml_project_config)
+        db.session.commit()
+        db.session.close()
+        flash('Successfully created your project.', 'success')
         return redirect('/dashboard/home')
     return render_template('dashboard/upload.html', active_dashboard="upload")
 

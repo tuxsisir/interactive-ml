@@ -1,111 +1,118 @@
 {% extends "pipeline/pipeline_base.html" %}
 {% block pipeline_content %}
-<div class="card">
-  <div class="card-header">
-    <div class="d-flex justify-content-between">
-      <div>
-        <h5>Data Cleaning Phase</h5>
-        <small class="text-muted">In this phase you can perform basic operations on cleaning the dataset such as
-          removing duplicate values, filling values with mean on null values of the dataset as well
-          as removing the columns which are not needed.</small>
+  <div class="card">
+    <div class="card-header">
+      <div class="d-flex justify-content-between">
+        <div>
+          <h5>Data Cleaning Phase</h5>
+          <small class="text-muted">In this phase you can perform basic operations on cleaning the dataset such as
+            removing duplicate values, filling values with mean on null values of the dataset as well
+            as removing the columns which are not needed.</small>
+        </div>
       </div>
     </div>
-  </div>
-  <form method="POST" action="/pipeline/{{ project.id }}/cleaning/perform-cleanup">
-  <div class="card-body">
-    <div class="row">
-      <div class="col-md-9">
-        <h6>Original Dataset Preview <em>(Showing 5 rows of {{ shape[0] }})</em></h6>
-        <div class="table-responsive">
-          {{ dataset|safe }}
-        </div>
-        <hr>
-        <h6>
-          Rows: {{ shape[0] }} - Columns: {{ shape[1] }}
-        </h6>
-        <hr>
-        <h5>Cleanups (Existing NaN Values)</h5>
+    <form method="POST" action="/pipeline/{{ project.id }}/cleaning/perform-cleanup">
+      <div class="card-body">
         <div class="row">
-          <div class="col-md-12">
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                {% for d, item in null_values.items() %}
-                  <th>{{ d }}</th>
-                {% endfor %}
-                </tr>
-                <tr>
-                {% for d, item in null_values.items() %}
-                <td {% if item > 0 %}class="text-danger font-weight-bold"{% endif %}>{{ item }}</td>
-                {% endfor %}
-                </tr>
-              </thead>
-            </table>
-          </div>
-          <div class="col-md-12">
-            <div class="d-flex mb-3">
-              <div class="mx-3">
-                Replace Null Values with:
+          <div class="col-md-9">
+            <h6>Original Dataset Preview <em>(Showing 5 rows of {{ shape[0] }})</em></h6>
+            <div class="table-responsive">
+              {{ dataset|safe }}
+            </div>
+            <hr>
+            <h6>
+              Rows: {{ shape[0] }} - Columns: {{ shape[1] }}
+            </h6>
+            <hr>
+            <h5>Cleanups (Existing NaN Values)</h5>
+            <div class="row">
+              <div class="col-md-12">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      {% for d, item in null_values.items() %}
+                        <th>{{ d }}</th>
+                      {% endfor %}
+                    </tr>
+                    <tr>
+                      {% for d, item in null_values.items() %}
+                        <td {% if item > 0 %}class="text-danger font-weight-bold"{% endif %}>{{ item }}</td>
+                      {% endfor %}
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+              <div class="col-md-12">
+                <div class="d-flex mb-3">
+                  <div class="mx-3">
+                    Replace Null Values with:
+                  </div>
+                  <div>
+                    <select class="form-select" name="null_values">
+                      <option value="1" {% if project_config.config.get('cleaning', None) and project_config.config.cleaning.nan == 1 %}selected{% endif %}>Mean value of the column</option>
+                      <option value="2" {% if project_config.config.get('cleaning', None) and project_config.config.cleaning.nan == 2 %}selected{% endif %}>Median value of the column</option>
+                      <option value="3" {% if project_config.config.get('cleaning', None) and project_config.config.cleaning.nan == 3 %}selected{% endif %}>Remove values</option>
+                    </select>
+                  </div>
+                </div>
               </div>
               <div>
-                <select class="form-select" name="null_values">
-                  <option value="1">Mean value of the column</option>
-                  <option value="2">Median value of the column</option>
-                  <option value="3" selected>Remove values</option>
-                </select>
+              </div>
+              <div class="col-md-12">
+                <hr>
+                <h5>Final Cleaned Up Data</h5>
+                <div class="table-responsive" style="background-color: #ebffeb; padding: 18px; border-radius: 10px;">
+                  {{ df_cleaned_head|safe }}
+                </div>
+                <h6 class="my-2">Rows: {{ df_cleaned_shape[0] }} - Columns: {{ df_cleaned_shape[1] }}</h6>
+                <h5>Final Cleaned up Null values</h5>
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      {% for d, item in cleaned_null_values.items() %}
+                        <th>{{ d }}</th>
+                      {% endfor %}
+                    </tr>
+                    <tr>
+                      {% for d, item in cleaned_null_values.items() %}
+                        <td {% if item == 0 %}class="text-success font-weight-bold"{% endif %}>{{ item }}</td>
+                      {% endfor %}
+                    </tr>
+                  </thead>
+                </table>
               </div>
             </div>
           </div>
-          <div>
-          </div>
-          <div class="col-md-12">
+          <div class="col-md-3">
+            <h5>Drop Columns in the Dataset</h5>
             <hr>
-            <h5>Final Cleaned Up Data</h5>
-            <div class="table-responsive" style="background-color: #ebffeb; padding: 18px; border-radius: 10px;">
-              {{ df_cleaned_head|safe }}
-            </div>
-            <h6 class="my-2">Rows: {{ df_cleaned_shape[0] }} - Columns: {{ df_cleaned_shape[1] }}</h6>
-            <h5>Final Cleaned up Null values</h5>
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                {% for d, item in cleaned_null_values.items() %}
-                  <th>{{ d }}</th>
-                {% endfor %}
-                </tr>
-                <tr>
-                {% for d, item in cleaned_null_values.items() %}
-                <td {% if item == 0 %}class="text-success font-weight-bold"{% endif %}>{{ item }}</td>
-                {% endfor %}
-                </tr>
-              </thead>
-            </table>
+            {% for column in columns %}
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  name="filtered_columns"
+                  type="checkbox"
+                  value="{{ column }}"
+                  id="id_{{ column }}"
+                  {% if project_config.config.get('cleaning', None) and column in project_config.config.cleaning.fields %}checked{% endif %}
+                >
+                <label class="form-check-label" for="id_{{ column }}">
+                  {{ column }}
+                </label>
+              </div>
+            {% endfor %}
+            <hr>
+            <button type="submit" class="btn btn-sm btn-primary my-3">Perform Cleanup</button>
           </div>
         </div>
       </div>
-      <div class="col-md-3">
-          <h5>Drop Columns in the Dataset</h5>
-          <hr>
-          {% for column in columns %}
-          <div class="form-check">
-            <input class="form-check-input" name="filtered_columns" type="checkbox" value="{{ column }}" id="id_{{ column }}">
-            <label class="form-check-label" for="id_{{ column }}">
-              {{ column }}
-            </label>
-          </div>
-          {% endfor %}
-          <hr>
-          <button type="submit" class="btn btn-sm btn-primary my-3">Perform Cleanup</button>
+    </form>
+    <div class="card-footer">
+      <div class="d-flex justify-content-between">
+        <button class="btn btn-secondary btn-sm" disabled><i class="icon bi-arrow-left-circle mx-1"></i>Previous</button>
+        <a href="{{ url_for('pipeline.pipeline_detail_eda', id=project.id) }}"
+          class="btn btn-success btn-sm text-white">Next<i class="icon bi-arrow-right-circle mx-1"></i></a>
       </div>
     </div>
   </div>
-  </form>
-  <div class="card-footer">
-    <div class="d-flex justify-content-between">
-      <button class="btn btn-secondary btn-sm" disabled><i class="icon bi-arrow-left-circle mx-1"></i>Previous</button>
-      <a href="{{ url_for('pipeline.pipeline_detail_eda', id=project.id) }}"
-        class="btn btn-success btn-sm text-white">Next<i class="icon bi-arrow-right-circle mx-1"></i></a>
-    </div>
-  </div>
-</div>
 {% endblock pipeline_content %}

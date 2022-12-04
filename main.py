@@ -38,6 +38,12 @@ def create_app():
     app.config.update({
         'SQLALCHEMY_DATABASE_URI': db_uri,
         'SQLALCHEMY_TRACK_MODIFICATIONS': False,
+        'SQLALCHEMY_ENGINE_OPTIONS': {
+            "max_overflow": 15,
+            "pool_pre_ping": True,
+            "pool_recycle": 60 * 60,
+            "pool_size": 30,
+            }
         })
     db.init_app(app)
     migrate = Migrate(app, db)

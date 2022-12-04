@@ -3,39 +3,39 @@
   <div class="card">
     <div class="card-header">
       Predict Unseen Data
+    </div>
+    <div class="card-body">
       <div class="row">
         <div class="col-md-8">
           <div class="card-body">
-            <div class="mb-3 row">
-              <label for="staticEmail" class="col-sm-2 col-form-label">Label 1</label>
-              <div class="col-sm-10">
-                <input type="text" class="form-control">
-              </div>
-            </div>
-            <div class="mb-3 row">
-              <label for="staticEmail" class="col-sm-2 col-form-label">Label 2</label>
-              <div class="col-sm-10">
-                <input type="text" class="form-control">
-              </div>
-            </div>
-            <div class="mb-3 row">
-              <label for="inputPassword" class="col-sm-2 col-form-label">Label 3</label>
-              <div class="col-sm-10">
-                <input type="text" class="form-control" id="inputPassword">
-              </div>
-            </div>
-            <button class="btn btn-primary">
-              Predict
-            </button>
+            <form method="POST" action="{{ url_for('pipeline.pipeline_detail_predict', id=project.id) }}">
+              {% for feature in selected_features %}
+                <div class="mb-3 row">
+                  <label for="staticEmail" class="col-sm-2 col-form-label">{{ feature }}</label>
+                  <div class="col-sm-10">
+                    <input type="text" name="{{ feature }}" value="" class="form-control">
+                  </div>
+                </div>
+              {% endfor %}
+              <button class="btn btn-primary">
+                Predict
+              </button>
+            </form>
           </div>
         </div>
         <div class="col-md-4">
-          {% if true %}
-            <div>
-              Based on the model:
-              The mentioned characteristics will have following possibility of prediction:
-              <h2 class="text-success">$90,000.00</h2>
-            </div>
+          {% if learning == 'regression' %}
+            {% if predicted|length > 0 %}
+              <div>
+                Based on the model <strong>{{ selected_model }}</strong>:<br>
+                The mentioned characteristics will have following possibility of prediction for predictor value ({{ predictor }}):
+                <h2 class="text-success">{{ predicted[0] }}</h2>
+              </div>
+            {% else %}
+              <div>
+                <h5 class="text-danger text-center">Please apply values to predict.</h5>
+              </div>
+            {% endif %}
           {% else %}
             <h5 class="mb-3">Logistic Regression Classification</h5>
             <span>Predictor: Healthy or not?</span>

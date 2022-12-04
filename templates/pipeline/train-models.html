@@ -1,98 +1,207 @@
 {% extends "pipeline/pipeline_base.html" %}
 {% block pipeline_content %}
-<div class="card">
-  <div class="card-header">
-    Train Models
-  </div>
-  <div class="card-body">
-    <div class="row">
-      <div class="col-md-6">
-        <h5>
-          Configure and apply Classifiers:
-        </h5>
-        {% for classifier in classifiers %}
-        <div class="form-check form-check-inline">
-          <input class="form-check-input" type="checkbox" name="classifier" id="{{ classifier }}">
-          <label class="form-check-label" for="{{ classifier }}">
-            {{ classifier }}
-          </label>
+  <div class="card">
+    <div class="card-header">
+      Train Models
+    </div>
+    <div class="card-body">
+      {% if learning == 'regression' %}
+        <div class="row">
+          <div class="col-md-6">
+            <div class="d-flex">
+              <div>
+                <h6>Independent</h6>
+                {{ active_dataset|safe }}
+              </div>
+              <div class="mx-3">
+                <h6>Dependent</h6>
+                {{ predictor_dataset|safe }}
+              </div>
+            </div>
+            <hr>
+            <h6>Train/Test Splits</h6>
+            <table class="table table-bordered table-hover dataset-table">
+              <tr>
+                <th>Train Set</th>
+                <th>Test Set</th>
+              </tr>
+              <tr>
+                <td>{{ train_shape }}</td>
+                <td>{{ test_shape }}</td>
+              </tr>
+            </table>
+            <hr>
+            <h5>Tune the models</h5>
+            <form method="POST" action="{{ url_for('pipeline.pipeline_detail_train', id=project.id) }}">
+              <div class="form-check">
+                <label class="form-check-label" for="Ridge">
+                  Ridge Regression
+                </label>
+                <div class="mb-3">
+                  <label for="ridge" class="form-label"><i>Use Alpha Value</i></label>
+                  <input type="number" step="0.01" class="form-control" id="ridge" name="ridge" placeholder="0.01" value="{{ regression_model_values.Ridge }}">
+                </div>
+              </div>
+              <div class="form-check">
+                <label class="form-check-label" for="lasso">
+                  Lasso Regression
+                </label>
+                <div class="mb-3">
+                  <label for="lasso" class="form-label"><i>Use Alpha Value</i></label>
+                  <input type="number" step="0.01" class="form-control" id="lasso" name="lasso" placeholder="0.01" value="{{ regression_model_values.Lasso }}">
+                </div>
+              </div>
+              <div class="form-check">
+                <label class="form-check-label" for="dtr">
+                  DecisionTreeClassifier
+                </label>
+                <div class="mb-3">
+                  <label for="dtr" class="form-label"><i>Random State</i></label>
+                  <input type="number" class="form-control" id="dtr" name="dtr" placeholder="42" value="{{ regression_model_values.DecisionTreeRegressor }}">
+                </div>
+              </div>
+              <input class="form-check-input" type="text" disabled hidden name="finalized_model" value="{{ regression_model_values.finalized_model }}">
+              <button type="submit" class="btn btn-sm btn-primary">Apply Changes</button>
+            </form>
+          </div>
+          <div class="col-md-6">
+            <table class="table table-bordered table-hover">
+              <tr>
+                <th>Algorithm</th>
+                <th>Mean Squared Error</th>
+                <th>R-Squared</th>
+                <th>Time Taken</th>
+              </tr>
+              {% for item, val in regression_results.items() %}
+                <tr {% if loop.index == 1 %} class="bg-success text-white" {% endif %}>
+                  <td>{{ item }}</td>
+                  <td>{{ val.mean_squared_error }}</td>
+                  <td>{{ val.r_squared }}</td>
+                  <td>{{ val.time }}</td>
+                </tr>
+              {% endfor %}
+            </table>
+            <form method="POST" action="{{ url_for('pipeline.pipeline_finalize_model', id=project.id) }}">
+              <h5>Finalize Model Here:</h5>
+              {% for item, val in regression_results.items() %}
+                <div class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="finalized_model"
+                    id="{{ item }}"
+                    value="{{ item }}" {% if regression_model_values.finalized_model == item %}checked{% endif %}>
+                  <label class="form-check-label" for="{{ item }}">
+                    {{ item }}
+                  </label>
+                </div>
+              {% endfor %}
+              <div>
+                <button type="submit" class="btn btn-sm btn-primary">Confirm Model</button>
+              </div>
+            </form>
+          </div>
         </div>
-        {% endfor %}
-        <div>
-          <h6>KNeighborsClassifier</h6>
-          <hr>
-          <h6>GaussianNB()</h6>
-          <hr>
-          <h6>DecisionTreeClassifier(max_depth=5)</h6>
-          <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label"><i>Max Depth</i></label>
-            <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="5">
-          </div>
-          <hr>
-          <h6>RandomForestClassifier(n_estimators=500, max_depth=5, max_leaf_nodes=16)</h6>
-          <div class="d-flex">
-            <div class="mb-3">
-              <label for="exampleFormControlInput1" class="form-label"><i>n_estimators</i></label>
-              <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="500">
-            </div>
-            <div class="mb-3">
-              <label for="exampleFormControlInput1" class="form-label"><i>Max Depth</i></label>
-              <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="5">
-            </div>
-            <div class="mb-3">
-              <label for="exampleFormControlInput1" class="form-label"><i>Max Leaf Nodes</i></label>
-              <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="16">
-            </div>
-          </div>
-          <hr>
-          <h6>AdaBoostClassifier()</h6>
-          <hr>
-          <h6>XGBClassifier(base_score=0.5, max_depth=5, use_label_encoder=False, validate_parameters=1)</h6>
-          <div class="d-flex">
-            <div class="mb-3">
-              <label for="exampleFormControlInput1" class="form-label"><i>base score</i></label>
-              <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="0.5">
-            </div>
-            <div class="mb-3">
-              <label for="exampleFormControlInput1" class="form-label"><i>Max Depth</i></label>
-              <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="5">
-            </div>
-            <div class="mb-3">
-              <label for="exampleFormControlInput1" class="form-label"><i>Validate Parameters</i></label>
-              <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="1">
-            </div>
-          </div>
-        </div>
-        <button class="btn btn-sm btn-primary">Run and Review Scores</button>
-      </div>
-      <div class="col-md-6">
-        <h5>
-          Review Model Scores:
-        </h5>
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Classifier</th>
-              <th>Score</th>
-            </tr>
-          </thead>
-          <tbody>
+      {% endif %}
+      {% if learning == 'classification' %}
+        <div class="row">
+          <div class="col-md-6">
+            <h5>
+              Configure and apply Classifiers:
+            </h5>
             {% for classifier in classifiers %}
-            <tr class="table-success">
-              <td>{{ classifier }}</td>
-              <td>0.00</td>
-            </tr>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="classifier" id="{{ classifier }}">
+                <label class="form-check-label" for="{{ classifier }}">
+                  {{ classifier }}
+                </label>
+              </div>
             {% endfor %}
-          </tbody>
-        </table>
+            <div>
+              <h6>KNeighborsClassifier</h6>
+              <hr>
+              <h6>GaussianNB()</h6>
+              <hr>
+              <h6>DecisionTreeClassifier(max_depth=5)</h6>
+              <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label"><i>Max Depth</i></label>
+                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="5">
+              </div>
+              <hr>
+              <h6>RandomForestClassifier(n_estimators=500, max_depth=5, max_leaf_nodes=16)</h6>
+              <div class="d-flex">
+                <div class="mb-3">
+                  <label for="exampleFormControlInput1" class="form-label"><i>n_estimators</i></label>
+                  <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="500">
+                </div>
+                <div class="mb-3">
+                  <label for="exampleFormControlInput1" class="form-label"><i>Max Depth</i></label>
+                  <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="5">
+                </div>
+                <div class="mb-3">
+                  <label for="exampleFormControlInput1" class="form-label"><i>Max Leaf Nodes</i></label>
+                  <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="16">
+                </div>
+              </div>
+              <hr>
+              <h6>AdaBoostClassifier()</h6>
+              <hr>
+              <h6>XGBClassifier(base_score=0.5, max_depth=5, use_label_encoder=False, validate_parameters=1)</h6>
+              <div class="d-flex">
+                <div class="mb-3">
+                  <label for="exampleFormControlInput1" class="form-label"><i>base score</i></label>
+                  <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="0.5">
+                </div>
+                <div class="mb-3">
+                  <label for="exampleFormControlInput1" class="form-label"><i>Max Depth</i></label>
+                  <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="5">
+                </div>
+                <div class="mb-3">
+                  <label for="exampleFormControlInput1" class="form-label"><i>Validate Parameters</i></label>
+                  <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="1">
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-sm btn-primary">Run and Review Scores</button>
+          </div>
+          <div class="col-md-6">
+            <h5>
+              Review Model Scores:
+            </h5>
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Classifier</th>
+                  <th>Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for classifier in classifiers %}
+                  <tr class="table-success">
+                    <td>{{ classifier }}</td>
+                    <td>0.00</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+    <div class="card-footer">
+      <div class="d-flex justify-content-between">
+        <a href="{{ url_for('pipeline.pipeline_detail_features', id=project.id) }}" class="btn btn-secondary btn-sm" disabled><i class="icon bi-arrow-left-circle mx-1"></i>Previous</a>
+        <a href="{{ url_for('pipeline.pipeline_detail_predict', id=project.id) }}" class="btn btn-success btn-sm text-white">Next<i class="icon bi-arrow-right-circle mx-1"></i></a>
       </div>
     </div>
   </div>
-  <div class="card-footer">
-    <div class="d-flex justify-content-between">
-      <button class="btn btn-secondary btn-sm" disabled><i class="icon bi-arrow-left-circle mx-1"></i>Previous</button>
-      <button class="btn btn-success btn-sm text-white">Next<i class="icon bi-arrow-right-circle mx-1"></i></button>
-    </div>
-  </div>
-</div>
 {% endblock pipeline_content %}
+{% block js %}
+  <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
+  <script>
+    $(document).ready( function () {
+      $('#myTable').DataTable();
+    });
+  </script>
+{% endblock js %}

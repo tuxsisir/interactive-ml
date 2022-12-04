@@ -64,7 +64,7 @@
       {% if messages %}
       {% for category, message in messages %}
       <div class="alert alert-{{ category }} my-3" role="alert">
-        <span class="text-capitalize font-weight-bold">{% if category == 'danger' %}Error{% endif %}:</span> {{ message }}
+        <span class="mx-2"><i class="icon bi-info-circle-fill mr-3"></i></span><span class="text-capitalize font-weight-bold">{% if category == 'danger' %}Error:{% endif %}</span> {{ message }}
         </div>
       {% endfor %}
       {% endif %}

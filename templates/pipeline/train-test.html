@@ -1,48 +1,60 @@
 {% extends "pipeline/pipeline_base.html" %} {% block pipeline_content %}
-<div class="card">
-  <div class="card-header">
-    <h5>Train Test Split</h5>
-    <small class="text-muted">In this phase you can split the dataset into training and test.</small>
-  </div>
-  <div class="card-body">
-    <div class="row">
-      <div class="col-md-9">
-        <h5>Train / Test Splits</h5>
-        <code class="my-3">
-          X_train, X_test, y_train, y_test = train_test_split(X, y,
-          test_size=0.25, random_state=42)
-        </code>
-        <div class="d-flex">
-          <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label"><i>Test Size</i></label>
-            <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="0.25" />
+  <div class="card">
+    <div class="card-header">
+      <h5>Train Test Split</h5>
+      <small class="text-muted">In this phase you can split the dataset into training and test.</small>
+    </div>
+    <form method="POST" action="{{ url_for('pipeline.pipeline_detail_train_test', id=project.id) }}">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-9">
+            <h5>Select Predictor Value</h5>
+            <i class="d-block mb-3">Select one feature to mark it as a predictor.</i>
+            <div class="d-flex">
+              {% for col in columns %}
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="predictor" id="predictor_value" value="{{ col }}" {% if predictor == col %} checked {% endif %}>
+                  <label class="form-check-label" for="predictor_value">{{ col }}</label>
+                </div>
+              {% endfor %}
+            </div>
+            <hr>
+            <h5>Train / Test Splits</h5>
+            <code class="my-3">
+              X_train, X_test, y_train, y_test = train_test_split(X, y,
+              test_size=0.25, random_state=42)
+            </code>
+            <div class="d-flex">
+              <div class="mb-3">
+                <label for="test_size" class="form-label"><i>Test Size</i></label>
+                <input type="number" step="0.01" class="form-control" id="test_size" name="test_size" value="{{ test_size }}" placeholder="0.25" />
+                <small>Between 0 to 1</small>
+              </div>
+              <div class="mb-3 mx-2">
+                <label for="random_state" class="form-label"><i>Random State</i></label>
+                <input type="number" class="form-control" id="random_state" name="random_state" value="{{ random_state }}" placeholder="42" />
+              </div>
+            </div>
           </div>
-          <div class="mb-3 mx-2">
-            <label for="exampleFormControlInput1" class="form-label"><i>Random State</i></label>
-            <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="42" />
+          <div class="col-md-3">
+            <h5>Generate Train Test Splits</h5>
+              <hr />
+              <button type="submit" class="btn btn-primary btn-sm">
+                Apply Changes
+              </button>
           </div>
         </div>
       </div>
-      <div class="col-md-3">
-        <h5>Generate Train Test Splits</h5>
-        <form method="POST" action="{{ url_for('pipeline.pipeline_detail_train_test', id=project.id) }}">
-          <hr />
-          <button type="submit" class="btn btn-primary btn-sm">
-            Apply Changes
-          </button>
-        </form>
+    </form>
+    <div class="card-footer">
+      <div class="d-flex justify-content-between">
+        <a href="{{ url_for('pipeline.pipeline_detail_cleaning', id=project.id) }}" class="btn btn-secondary btn-sm"
+          disabled>
+          <i class="icon bi-arrow-left-circle mx-1"></i>Previous</a>
+        <a href="{{ url_for('pipeline.pipeline_detail_features', id=project.id) }}"
+          class="btn btn-success btn-sm text-white">
+          Next<i class="icon bi-arrow-right-circle mx-1"></i></a>
       </div>
     </div>
   </div>
-  <div class="card-footer">
-    <div class="d-flex justify-content-between">
-      <a href="{{ url_for('pipeline.pipeline_detail_cleaning', id=project.id) }}" class="btn btn-secondary btn-sm"
-        disabled>
-        <i class="icon bi-arrow-left-circle mx-1"></i>Previous</a>
-      <a href="{{ url_for('pipeline.pipeline_detail_features', id=project.id) }}"
-        class="btn btn-success btn-sm text-white">
-        Next<i class="icon bi-arrow-right-circle mx-1"></i></a>
-    </div>
-  </div>
-</div>
 {% endblock pipeline_content %}

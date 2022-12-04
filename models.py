@@ -20,7 +20,7 @@ class User(UserMixin, db.Model):
     projects = db.relationship('MLProject', backref='projects', lazy=True)
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<User %r> %d' % self.username, self.id
 
 
 class OAuth(OAuthConsumerMixin, db.Model):
@@ -42,7 +42,7 @@ class MLProject(db.Model):
     status = db.Column(db.String(255))
 
     def __repr__(self):
-        return '<MLProject %r>' % self.title
+        return f'<MLProject {self.title} - {self.id}>'
 
 
 class MLProjectConfig(db.Model):
@@ -50,10 +50,10 @@ class MLProjectConfig(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     ml_project = db.Column(
         db.Integer,
-        db.ForeignKey(MLProject.id),
+        db.ForeignKey(MLProject.id, ondelete='CASCADE'),
         nullable=False)
     config = db.Column(JSONB)
     description = db.Column(db.String(500))
 
     def __repr__(self):
-        return '<MLProjectConfig %r>' % self.description[:20]
+        return f'<MLProjectConfig {self.id}>'
