@@ -37,6 +37,7 @@ def create_app():
     app = Flask(__name__)
     db_uri = os.getenv('DB_URI')
     app.config.update({
+        'MAX_CONTENT_LENGTH': 2 * 1024 * 1024, # don't allow more than 2 mb of file size
         'SQLALCHEMY_DATABASE_URI': db_uri,
         'SQLALCHEMY_TRACK_MODIFICATIONS': False,
         'SQLALCHEMY_ENGINE_OPTIONS': {

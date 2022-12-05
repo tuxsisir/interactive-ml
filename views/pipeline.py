@@ -25,6 +25,8 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import AdaBoostClassifier
 from xgboost import XGBClassifier
 
+from sqlalchemy.exc import NoResultFound
+
 import seaborn as sns
 import matplotlib
 matplotlib.use('Agg')
@@ -44,10 +46,13 @@ def get_project_user_df(id):
     """
     GET logged in user from session, project from url id and the original dataframe
     """
-    current_user = session['twitter_oauth_token']['screen_name']
-    project = db.session.query(MLProject).get(id)
-    config = db.session.query(MLProjectConfig).filter(
-        MLProjectConfig.ml_project == id).one()
+    try:
+        current_user = session['twitter_oauth_token']['screen_name']
+        project = db.session.query(MLProject).get(id)
+        config = db.session.query(MLProjectConfig).filter(
+            MLProjectConfig.ml_project == id).one()
+    except NoResultFound:
+        abort(404)
     db.session.close()
     # READ original
     df = pd.read_csv(os.path.join(
