@@ -821,7 +821,23 @@ def pipeline_detail_predict(id):
         MLProjectConfig.ml_project == id).one()
     plot_url = f"static/uploads/plots/{current_user}"
 
+    # fetch cleaned data for predictions
+    try:
+        cleaned_url = os.path.join(
+            basedir, f'static/uploads/datasets/{current_user}/{project.filename_preferred}', project.filename.replace('_original', '_cleaned'))
+        df = pd.read_csv(cleaned_url)
+    except FileNotFoundError:
+        db.session.close()
+        flash('Please clean the dataset to continue.', 'danger')
+        return redirect(url_for('pipeline.pipeline_detail_cleaning', id=id))
+
     selected_features = project_config.config.get('selected_features', None)
+
+    if not selected_features:
+        db.session.close()
+        flash('Please finalize features to train model.', 'danger')
+        return redirect(url_for('pipeline.pipeline_detail_features', id=id))
+
     supervised_learning_task = project_config.config.get(
         'supervised_learning_task', None)
     predictor = project_config.config.get('predictor', None)
@@ -847,15 +863,6 @@ def pipeline_detail_predict(id):
         flash('Please finalize model for prediction.', 'danger')
         return redirect(url_for('pipeline.pipeline_detail_train', id=id))
 
-    # fetch cleaned data for predictions
-    try:
-        cleaned_url = os.path.join(
-            basedir, f'static/uploads/datasets/{current_user}/{project.filename_preferred}', project.filename.replace('_original', '_cleaned'))
-        df = pd.read_csv(cleaned_url)
-    except FileNotFoundError:
-        db.session.close()
-        flash('Please clean the dataset to continue.', 'success')
-        return redirect(url_for('pipeline.pipeline_detail_cleaning', id=id))
 
     if supervised_learning_task == 'classification':
         # REPLACE DF WITH cleaned one rather than scaled, last minute bug
