@@ -194,7 +194,7 @@ def pipeline_detail_eda(id):
         hist_col = None
 
     if correlation:
-        plt.figure(figsize=(6, 6))
+        plt.figure(figsize=(10, 10))
         sns.heatmap(df.corr(), annot=True, cmap="Blues")
         plot_url = f"static/uploads/plots/{current_user}"
         plt.savefig(os.path.join(basedir, plot_url, 'correlation.png'),
@@ -202,7 +202,7 @@ def pipeline_detail_eda(id):
         plot_url = f"uploads/plots/{current_user}/correlation.png"
 
     if pairplot:
-        sns.pairplot(df.iloc[:,], height=2.5)
+        sns.pairplot(df.iloc[:,0:4], height=2.5)
         plt.tight_layout()
         plot_url = f"static/uploads/plots/{current_user}"
         plt.savefig(os.path.join(basedir, plot_url, 'pairplot.png'),
@@ -210,7 +210,8 @@ def pipeline_detail_eda(id):
         plot_url = f"uploads/plots/{current_user}/pairplot.png"
 
     if boxplot:
-        sns.boxplot(data=df)
+        plt.figure().clear()
+        sns.boxplot(data=df.iloc[:, 0:4])
         plot_url = f"static/uploads/plots/{current_user}"
         plt.savefig(os.path.join(basedir, plot_url, 'boxplot.png'),
                     dpi=300, bbox_inches='tight', pad_inches=0.2)
@@ -492,6 +493,7 @@ def pipeline_detail_features(id):
             map(lambda n: round(n * 100, 2), model.feature_importances_)) + [score])
 
     elif supervised_learning_task == 'classification':
+        print(len(y.unique()))
         if len(y.unique()) > 2:
             db.session.close()
             flash(
@@ -789,6 +791,9 @@ def pipeline_finalize_classifier_model(id):
 @pipeline_blueprint.route('<int:id>/predict', methods=['GET', 'POST'])
 @login_required
 def pipeline_detail_predict(id):
+    """
+    PREDICTIONS
+    """
     current_user, project, config, all_df = get_project_user_df(id)
     project_config = db.session.query(MLProjectConfig).filter(
         MLProjectConfig.ml_project == id).one()
@@ -806,6 +811,11 @@ def pipeline_detail_predict(id):
     test_size = project_config.config.get('train_test')['test_size']
     random_state = project_config.config.get('train_test')['random_state']
 
+    if not any([regression_model_values, classifier_model_values]):
+        db.session.close()
+        flash('Please finalize model for prediction.', 'danger')
+        return redirect(url_for('pipeline.pipeline_detail_train', id=id))
+
     if supervised_learning_task == 'regression' and not regression_model_values.get('finalized_model', None):
         db.session.close()
         flash('Please finalize model for prediction.', 'danger')
@@ -815,24 +825,30 @@ def pipeline_detail_predict(id):
         flash('Please finalize model for prediction.', 'danger')
         return redirect(url_for('pipeline.pipeline_detail_train', id=id))
 
+    # fetch cleaned data for predictions
     try:
-        scaled_url = os.path.join(
-            basedir, f'static/uploads/datasets/{current_user}/{project.filename_preferred}', project.filename.replace('_original', '_scaled'))
-        df = pd.read_csv(scaled_url)
-    except Exception as e:
-        # GET CLEANED IF NOT scaled dataset found
-        print(e)
+        cleaned_url = os.path.join(
+            basedir, f'static/uploads/datasets/{current_user}/{project.filename_preferred}', project.filename.replace('_original', '_cleaned'))
+        df = pd.read_csv(cleaned_url)
+    except FileNotFoundError:
+        db.session.close()
+        flash('Please clean the dataset to continue.', 'success')
+        return redirect(url_for('pipeline.pipeline_detail_cleaning', id=id))
+
+    if supervised_learning_task == 'classification':
+        # REPLACE DF WITH cleaned one rather than scaled, last minute bug
         try:
             cleaned_url = os.path.join(
                 basedir, f'static/uploads/datasets/{current_user}/{project.filename_preferred}', project.filename.replace('_original', '_cleaned'))
             df = pd.read_csv(cleaned_url)
-        except FileNotFoundError:
+        except Exception as e:
             db.session.close()
             flash('Please clean the dataset to continue.', 'success')
             return redirect(url_for('pipeline.pipeline_detail_cleaning', id=id))
 
     to_predict_features = []
     predicted = []
+    selected_model = ''
     if supervised_learning_task == 'regression':
         selected_model = regression_model_values['finalized_model']
         if request.method == "POST":
@@ -865,7 +881,28 @@ def pipeline_detail_predict(id):
             model.fit(X_train, y_train)
             predictions = model.predict(X_test)
             predicted = model.predict([to_predict_features])
-    else:
+
+            # generate linear prediction actual vs predicted
+            x_ax = range(len(predictions))
+            plt.figure().clear()
+            plt.scatter(x_ax, y_test, s=5, color="blue", label="original")
+            plt.plot(x_ax, predictions, lw=0.8, color="red", label="predicted")
+            plt.legend()
+            plt.savefig(os.path.join(basedir, plot_url, 'linear-actual-predicted.png'),
+                        dpi=300, bbox_inches='tight', pad_inches=0.2)
+            # SAVE HISTORY
+            existing_config = project_config.config
+            prediction_history = existing_config['regression_model_values']['history']
+            feature_text = ''
+            prediction_zip = dict(zip(selected_features, to_predict_features))
+            for key, val in  prediction_zip.items():
+                feature_text += f"{key}: {val}, "
+            prediction_history['features'].insert(0, feature_text)
+            prediction_history['predicted'].insert(0, str(predicted[0]))
+            existing_config['regression_model_values']['history'] = prediction_history
+            flag_modified(project_config, "config")
+            db.session.commit()
+    elif supervised_learning_task == 'classification':
         selected_model = classifier_model_values['finalized_model']
         gaussian_nb = GaussianNB()
         knn_classifier = KNeighborsClassifier()
@@ -931,7 +968,7 @@ def pipeline_detail_predict(id):
             flag_modified(project_config, "config")
             db.session.commit()
 
-
+    render_prediction_vis = f"{plot_url[7:]}/confusion_matrix.png" if supervised_learning_task == 'classification' else f"{plot_url[7:]}/linear-actual-predicted.png"
     db.session.close()
     return render_template(
         'pipeline/predict.html',
@@ -946,7 +983,7 @@ def pipeline_detail_predict(id):
         selected_model=selected_model,
         regression_model_values=regression_model_values,
         classifier_model_values=classifier_model_values,
-        plot_url=f"{plot_url[7:]}/confusion_matrix.png",
+        plot_url=render_prediction_vis,
         all_df=all_df.to_html(classes=('table table-hover dataset-table')))
 
 

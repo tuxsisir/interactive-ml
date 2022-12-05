@@ -68,20 +68,22 @@
                 </div>
                 <h6 class="my-2">Rows: {{ df_cleaned_shape[0] }} - Columns: {{ df_cleaned_shape[1] }}</h6>
                 <h5>Final Cleaned up Null values</h5>
-                <table class="table table-bordered">
-                  <thead>
-                    <tr>
-                      {% for d, item in cleaned_null_values.items() %}
-                        <th>{{ d }}</th>
-                      {% endfor %}
-                    </tr>
-                    <tr>
-                      {% for d, item in cleaned_null_values.items() %}
-                        <td {% if item == 0 %}class="text-success font-weight-bold"{% endif %}>{{ item }}</td>
-                      {% endfor %}
-                    </tr>
-                  </thead>
-                </table>
+                <div class="table-responsive">
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        {% for d, item in cleaned_null_values.items() %}
+                          <th>{{ d }}</th>
+                        {% endfor %}
+                      </tr>
+                      <tr>
+                        {% for d, item in cleaned_null_values.items() %}
+                          <td {% if item == 0 %}class="text-success font-weight-bold"{% endif %}>{{ item }}</td>
+                        {% endfor %}
+                      </tr>
+                    </thead>
+                  </table>
+                </div>
               </div>
             </div>
           </div>

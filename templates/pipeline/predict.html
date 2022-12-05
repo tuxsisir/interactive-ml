@@ -21,7 +21,11 @@
                 Predict
               </button>
             </form>
-            {% if learning == 'classification' %}
+            {% if learning == 'regression' %}
+              <hr class="my-4">
+              <h4>Actual Vs. Predicted</h4>
+              <img src="{{ url_for('static', filename=plot_url) }}" height="400" width="400" style="margin: 0 auto; display: block;">
+            {% elif learning == 'classification' %}
               <hr class="my-4">
               <h4>Confusion Matrix</h4>
               <img src="{{ url_for('static', filename=plot_url) }}" height="400" width="400" style="margin: 0 auto; display: block;">
@@ -41,7 +45,21 @@
                 <h5 class="text-danger text-center">Please apply values to predict.</h5>
               </div>
             {% endif %}
-          {% else %}
+            <hr>
+            <h5>Your Prediction History</h5>
+            <table class="table table-responsive table-bordered table-hover">
+              <tr>
+                <th>Features</th>
+                <th>Prediction</th>
+              </tr>
+              {% for index in range(regression_model_values.history.features|length) %}
+                <tr>
+                  <td>{{ regression_model_values.history.features[index ]}}</td>
+                  <td>{{ '%0.2f'| format(regression_model_values.history.predicted[index]|float) }}</td>
+                </tr>
+              {% endfor %}
+            </table>
+          {% elif learning == 'classification' %}
             {% if predicted|length > 0 %}
               <h5 class="mb-3">Classification based on: {{ selected_model }}</h5>
               <span>Predictor: {{ predictor }}</span>
