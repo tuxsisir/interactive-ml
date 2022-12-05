@@ -60,3 +60,4 @@ Flask-Dance[sqla]
 blinker
 xgboost
 python-dotenv
+seaborn
