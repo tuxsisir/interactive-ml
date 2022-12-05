@@ -121,6 +121,11 @@ def pipeline_perform_cleaning(id):
         basedir, f'static/uploads/datasets/{current_user}/{project.filename_preferred}',
         project.filename))
     filtered_columns = request.form.getlist('filtered_columns')
+    original_columns_len = len(df.columns.to_list())
+    if original_columns_len - len(filtered_columns) <= 1:
+        db.session.commit()
+        flash('Please keep at least two columns in the dataset.', 'danger')
+        return redirect(url_for('pipeline.pipeline_detail_cleaning', id=id))
     null_values = request.form.get('null_values', None, type=int)
     cleaning_config = {'cleaning': {
         'fields': filtered_columns, 'nan': null_values}}
@@ -167,7 +172,7 @@ def pipeline_detail_eda(id):
         pairplot = True if active_vis == 'pairplot' else False
         boxplot = True if active_vis == 'boxplot' else False
         if hist_plot and not request.form.get('hist_col'):
-            db.session.commit()
+            db.session.close()
             flash('Please select columns for histogram distribution.', 'danger')
             return redirect(url_for('pipeline.pipeline_detail_eda', id=id))
         hist_col = request.form.get('hist_col')
