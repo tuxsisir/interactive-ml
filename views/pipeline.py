@@ -435,17 +435,24 @@ def pipeline_detail_features(id):
         df = pd.read_csv(scaled_url)
     except Exception as e:
         # GET CLEANED IF NOT scaled dataset found
-        print(e)
-        print('here?')
         try:
             cleaned_url = os.path.join(
                 basedir, f'static/uploads/datasets/{current_user}/{project.filename_preferred}', project.filename.replace('_original', '_cleaned'))
             df = pd.read_csv(cleaned_url)
         except Exception as e:
-            print('again?')
-            print(e)
             db.session.close()
-            print('here?')
+            flash('Please clean the dataset to continue.', 'success')
+            return redirect(url_for('pipeline.pipeline_detail_cleaning', id=id))
+
+    print(supervised_learning_task)
+    if supervised_learning_task == 'classification':
+        # REPLACE DF WITH cleaned one rather than scaled, last minute bug
+        try:
+            cleaned_url = os.path.join(
+                basedir, f'static/uploads/datasets/{current_user}/{project.filename_preferred}', project.filename.replace('_original', '_cleaned'))
+            df = pd.read_csv(cleaned_url)
+        except Exception as e:
+            db.session.close()
             flash('Please clean the dataset to continue.', 'success')
             return redirect(url_for('pipeline.pipeline_detail_cleaning', id=id))
 
@@ -589,6 +596,17 @@ def pipeline_detail_train(id):
             flash('Please clean the dataset to continue.', 'success')
             return redirect(url_for('pipeline.pipeline_detail_cleaning', id=id))
 
+    if learning == 'classification':
+        # REPLACE DF WITH cleaned one rather than scaled, last minute bug
+        try:
+            cleaned_url = os.path.join(
+                basedir, f'static/uploads/datasets/{current_user}/{project.filename_preferred}', project.filename.replace('_original', '_cleaned'))
+            df = pd.read_csv(cleaned_url)
+        except Exception as e:
+            db.session.close()
+            flash('Please clean the dataset to continue.', 'success')
+            return redirect(url_for('pipeline.pipeline_detail_cleaning', id=id))
+
     if request.method == "POST":
         if learning == 'regression':
             regression_model_values['Ridge'] = request.form.get(
@@ -674,6 +692,8 @@ def pipeline_detail_train(id):
                 validate_parameters=classifier_model_values['XGBClassifier']['validate_parameters'])
         ]
         for clf in classifiers:
+            print(X_train)
+            print(y_train)
             clf_model = clf.fit(X_train, y_train)
             y_pred = clf_model.predict(X_test)
             score = round(accuracy_score(y_test, y_pred) * 100, 2)

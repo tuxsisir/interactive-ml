@@ -1,7 +1,7 @@
 import sys,os
 sys.path.append(os.getcwd())
 
-from flask import Flask, render_template, redirect, url_for, send_from_directory, flash
+from flask import Flask, render_template, redirect, url_for, flash
 from flask_migrate import Migrate
 
 from flask_humanize import Humanize
@@ -16,8 +16,6 @@ from flask_login import current_user, LoginManager, login_required, login_user, 
 from flask_dance.consumer.storage.sqla import SQLAlchemyStorage
 from flask_dance.consumer import oauth_authorized
 from sqlalchemy.orm.exc import NoResultFound
-
-from dotenv import dotenv_values
 
 # config = dotenv_values(".env")
 
