@@ -58,3 +58,5 @@ zipp==3.8.1
 flask-login
 Flask-Dance[sqla]
 blinker
+xgboost
+python-dotenv

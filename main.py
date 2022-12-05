@@ -1,7 +1,7 @@
 import sys,os
 sys.path.append(os.getcwd())
 
-from flask import Flask, render_template, redirect, url_for, send_from_directory
+from flask import Flask, render_template, redirect, url_for, send_from_directory, flash
 from flask_migrate import Migrate
 
 from flask_humanize import Humanize
@@ -19,7 +19,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from dotenv import dotenv_values
 
-config = dotenv_values(".env")
+# config = dotenv_values(".env")
 
 login_manager = LoginManager()
 
@@ -37,7 +37,7 @@ def server_error(_):
 
 def create_app():
     app = Flask(__name__)
-    db_uri = config['DB_URI']
+    db_uri = os.getenv('DB_URI')
     app.config.update({
         'SQLALCHEMY_DATABASE_URI': db_uri,
         'SQLALCHEMY_TRACK_MODIFICATIONS': False,
@@ -59,10 +59,10 @@ def create_app():
     return app
 
 app = create_app()
-app.secret_key = config['APP_SECRET']
+app.secret_key = os.getenv('APP_SECRET')
 twitter_blueprint = make_twitter_blueprint(
-    api_key=config['TWITTER_CLIENT_ID'],
-    api_secret=config['TWITTER_CLIENT_SECRET'],
+    api_key=os.getenv('TWITTER_CLIENT_ID'),
+    api_secret=os.getenv('TWITTER_CLIENT_SECRET'),
 )
 app.register_blueprint(twitter_blueprint, url_prefix="/login")
 app.register_blueprint(dashboard_blueprint)
@@ -120,4 +120,5 @@ def twitter_logged_in(blueprint, token):
 def logout():
     logout_user() # Delete Flask-Login's session cookie
     del twitter_blueprint.token # Delete OAuth token from storage
+    flash('Logged out! See you again!', 'success')
     return redirect('/')

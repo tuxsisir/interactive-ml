@@ -24,23 +24,25 @@
               Rows: {{ shape[0] }} - Columns: {{ shape[1] }}
             </h6>
             <hr>
-            <h5>Cleanups (Existing NaN Values)</h5>
+            <h5>Original Dataset Cleanups (Existing NaN Values)</h5>
             <div class="row">
-              <div class="col-md-12">
-                <table class="table table-bordered">
-                  <thead>
-                    <tr>
-                      {% for d, item in null_values.items() %}
-                        <th>{{ d }}</th>
-                      {% endfor %}
-                    </tr>
-                    <tr>
-                      {% for d, item in null_values.items() %}
-                        <td {% if item > 0 %}class="text-danger font-weight-bold"{% endif %}>{{ item }}</td>
-                      {% endfor %}
-                    </tr>
-                  </thead>
-                </table>
+              <div class="col-md-12 mb-4">
+                <div class=table-responsive>
+                  <table class="table table-bordered dataset-table">
+                    <thead>
+                      <tr>
+                        {% for d, item in null_values.items() %}
+                          <th>{{ d }}</th>
+                        {% endfor %}
+                      </tr>
+                      <tr>
+                        {% for d, item in null_values.items() %}
+                          <td {% if item > 0 %}class="text-danger font-weight-bold"{% endif %}>{{ item }}</td>
+                        {% endfor %}
+                      </tr>
+                    </thead>
+                  </table>
+                </div>
               </div>
               <div class="col-md-12">
                 <div class="d-flex mb-3">

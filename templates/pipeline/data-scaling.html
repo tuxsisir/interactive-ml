@@ -54,8 +54,8 @@
   </div>
   <div class="card-footer">
     <div class="d-flex justify-content-between">
-      <button class="btn btn-secondary btn-sm" disabled><i class="icon bi-arrow-left-circle mx-1"></i>Previous</button>
-      <button class="btn btn-success btn-sm text-white">Next<i class="icon bi-arrow-right-circle mx-1"></i></button>
+      <a href="{{ url_for('pipeline.pipeline_detail_eda', id=project.id) }}" class="btn btn-secondary btn-sm" disabled><i class="icon bi-arrow-left-circle mx-1"></i>Previous</a>
+      <a href="{{ url_for('pipeline.pipeline_detail_train_test', id=project.id) }}" class="btn btn-success btn-sm text-white">Next<i class="icon bi-arrow-right-circle mx-1"></i></a>
     </div>
   </div>
 </div>

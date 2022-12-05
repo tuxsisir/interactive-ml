@@ -10,7 +10,7 @@
           <div class="col-md-9">
             <h5>Select Predictor Value</h5>
             <i class="d-block mb-3">Select one feature to mark it as a predictor.</i>
-            <div class="d-flex">
+            <div class="d-flex flex-wrap">
               {% for col in columns %}
                 <div class="form-check form-check-inline">
                   <input class="form-check-input" type="radio" name="predictor" id="predictor_value" value="{{ col }}" {% if predictor == col %} checked {% endif %}>

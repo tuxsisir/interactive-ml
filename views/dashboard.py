@@ -29,6 +29,9 @@ def index():
     """
     Home page
     """
+    if session.get('_user_id', None):
+        flash('Welcome to Interactive ML Pipeline.', 'success')
+        return redirect('/dashboard/home')
     return render_template('index.html', page_index=True)
 
 
@@ -44,12 +47,12 @@ def explore():
 @dashboard_blueprint.route("/dashboard/home")
 @login_required
 def dashboard():
-    res = db.session.query(MLProject).order_by(
+    res = db.session.query(MLProject).filter_by(created_by=session['_user_id']).order_by(
         desc(MLProject.created_at)).all()
     counts = {
-        "draft": db.session.query(MLProject).filter_by(status='Draft').count(),
-        "completed": db.session.query(MLProject).filter_by(status='Completed').count(),
-        "in_progress": db.session.query(MLProject).filter_by(status='In Progress').count(),
+        "draft": db.session.query(MLProject).filter_by(created_by=session['_user_id'], status='Draft').count(),
+        "completed": db.session.query(MLProject).filter_by(created_by=session['_user_id'], status='Completed').count(),
+        "in_progress": db.session.query(MLProject).filter_by(created_by=session['_user_id'], status='In Progress').count(),
     }
     return render_template(
         'dashboard/home.html',
