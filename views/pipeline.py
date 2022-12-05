@@ -202,6 +202,7 @@ def pipeline_detail_eda(id):
         plt.figure(figsize=(10, 10))
         sns.heatmap(df.corr(), annot=True, cmap="Blues")
         plot_url = f"static/uploads/plots/{current_user}"
+        Path(basedir, plot_url).mkdir(parents=True, exist_ok=True)
         plt.savefig(os.path.join(basedir, plot_url, 'correlation.png'),
                     dpi=300, bbox_inches='tight', pad_inches=0.2)
         plot_url = f"uploads/plots/{current_user}/correlation.png"
@@ -210,6 +211,7 @@ def pipeline_detail_eda(id):
         sns.pairplot(df.iloc[:,0:4], height=2.5)
         plt.tight_layout()
         plot_url = f"static/uploads/plots/{current_user}"
+        Path(basedir, plot_url).mkdir(parents=True, exist_ok=True)
         plt.savefig(os.path.join(basedir, plot_url, 'pairplot.png'),
                     dpi=300, bbox_inches='tight', pad_inches=0.2)
         plot_url = f"uploads/plots/{current_user}/pairplot.png"
@@ -218,6 +220,7 @@ def pipeline_detail_eda(id):
         plt.figure().clear()
         sns.boxplot(data=df.iloc[:, 0:4])
         plot_url = f"static/uploads/plots/{current_user}"
+        Path(basedir, plot_url).mkdir(parents=True, exist_ok=True)
         plt.savefig(os.path.join(basedir, plot_url, 'boxplot.png'),
                     dpi=300, bbox_inches='tight', pad_inches=0.2)
         plot_url = f"uploads/plots/{current_user}/boxplot.png"
