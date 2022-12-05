@@ -17,6 +17,9 @@ from flask_dance.consumer.storage.sqla import SQLAlchemyStorage
 from flask_dance.consumer import oauth_authorized
 from sqlalchemy.orm.exc import NoResultFound
 
+from dotenv import dotenv_values
+
+config = dotenv_values(".env")
 
 login_manager = LoginManager()
 
@@ -34,7 +37,7 @@ def server_error(_):
 
 def create_app():
     app = Flask(__name__)
-    db_uri = 'postgresql://postgres:postgres@localhost:5432/mlflask'
+    db_uri = config['DB_URI']
     app.config.update({
         'SQLALCHEMY_DATABASE_URI': db_uri,
         'SQLALCHEMY_TRACK_MODIFICATIONS': False,
@@ -56,10 +59,10 @@ def create_app():
     return app
 
 app = create_app()
-app.secret_key = "iu3t%wtu6ery)$n-p_^4z7@54jz8$g#&pn4lgv38ug4gt-bh-z"
+app.secret_key = config['APP_SECRET']
 twitter_blueprint = make_twitter_blueprint(
-    api_key="3yGGjgRoflGgFk2yG4CJXIF86",
-    api_secret="jqqqdIAACQkpQsMB77lrIgWqMI5RueT76cIpoltHq5ND144X1U",
+    api_key=config['TWITTER_CLIENT_ID'],
+    api_secret=config['TWITTER_CLIENT_SECRET'],
 )
 app.register_blueprint(twitter_blueprint, url_prefix="/login")
 app.register_blueprint(dashboard_blueprint)

@@ -1,4 +1,3 @@
-import shutil
 import os
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -14,8 +13,7 @@ from sqlalchemy.orm.attributes import flag_modified
 from models import MLProject, MLProjectConfig
 
 # ML models
-from sklearn.feature_selection import SelectFromModel
-from sklearn.linear_model import LogisticRegression, LinearRegression, Ridge, Lasso, BayesianRidge
+from sklearn.linear_model import LinearRegression, Ridge, Lasso, BayesianRidge
 from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
 from sklearn.metrics import mean_squared_error, r2_score, accuracy_score, confusion_matrix
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
