@@ -147,6 +147,7 @@ def pipeline_perform_cleaning(id):
         project.filename.replace('_original', '_cleaned')), index=False)
 
     db.session.close()
+    flash('Successfully cleaned data.', 'success')
     return redirect(url_for('pipeline.pipeline_detail_cleaning', id=id))
 
 
@@ -200,6 +201,7 @@ def pipeline_detail_eda(id):
         plt.savefig(os.path.join(basedir, plot_url, 'hist.png'),
                     dpi=300, bbox_inches='tight', pad_inches=0.3)
         plot_url = f"uploads/plots/{current_user}/hist.png"
+        flash('Successfully generated histogram.', 'success')
     else:
         hist_col = None
 
@@ -211,6 +213,7 @@ def pipeline_detail_eda(id):
         plt.savefig(os.path.join(basedir, plot_url, 'correlation.png'),
                     dpi=300, bbox_inches='tight', pad_inches=0.2)
         plot_url = f"uploads/plots/{current_user}/correlation.png"
+        flash('Successfully generated correlation.', 'success')
 
     if pairplot:
         sns.pairplot(df.iloc[:,0:4], height=2.5)
@@ -220,6 +223,7 @@ def pipeline_detail_eda(id):
         plt.savefig(os.path.join(basedir, plot_url, 'pairplot.png'),
                     dpi=300, bbox_inches='tight', pad_inches=0.2)
         plot_url = f"uploads/plots/{current_user}/pairplot.png"
+        flash('Successfully generated pairplot.', 'success')
 
     if boxplot:
         plt.figure().clear()
@@ -229,6 +233,7 @@ def pipeline_detail_eda(id):
         plt.savefig(os.path.join(basedir, plot_url, 'boxplot.png'),
                     dpi=300, bbox_inches='tight', pad_inches=0.2)
         plot_url = f"uploads/plots/{current_user}/boxplot.png"
+        flash('Successfully generated boxplot.', 'success')
 
     return render_template(
         'pipeline/eda.html',
@@ -316,6 +321,7 @@ def pipeline_detail_scaling(id):
     feature_scaled = feature_scaled.reset_index(drop=True)
 
     if required_scaler:
+        flash('Successfully generated scaled dataset.', 'success')
         feature_scaled.to_csv(os.path.join(
             basedir, f'static/uploads/datasets/{current_user}/{project.filename_preferred}',
             project.filename.replace('_original', '_scaled')), index=False)
@@ -400,6 +406,7 @@ def pipeline_detail_train_test(id):
         flag_modified(project_config, "config")
         db.session.commit()
         db.session.close()
+        flash('Successfully generated train/test split with predictor.', 'success')
 
     # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
     db.session.close()
@@ -483,6 +490,7 @@ def pipeline_detail_features(id):
         project_config.config = existing_config
         flag_modified(project_config, "config")
         db.session.commit()
+        flash('Successfully saved features for training model.', 'success')
 
     X = df.drop(columns=[predictor])
     y = df[predictor]
@@ -635,6 +643,7 @@ def pipeline_detail_train(id):
             project_config.config = existing_config
             flag_modified(project_config, "config")
             db.session.commit()
+            flash('Successfully tuned models on Regression.', 'success')
         elif learning == 'classification':
             classifier_model_values['DecisionTreeClassifier'] = request.form.get(
                 'dtr_max_depth', 5, type=int)
@@ -657,7 +666,7 @@ def pipeline_detail_train(id):
             project_config.config = existing_config
             flag_modified(project_config, "config")
             db.session.commit()
-        flash('Model values updated.', 'success')
+            flash('Successfully tuned models on Classification.', 'success')
 
     X = df[selected_features]
     y = df[predictor]
@@ -768,7 +777,7 @@ def pipeline_finalize_regression_model(id):
         db.session.commit()
 
     db.session.close()
-    flash('Successfully selected model!', 'success')
+    flash('Successfully selected regression model!', 'success')
     return redirect(url_for('pipeline.pipeline_detail_train', id=id))
 
 
