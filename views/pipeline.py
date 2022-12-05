@@ -896,6 +896,8 @@ def pipeline_detail_predict(id):
             plt.scatter(x_ax, y_test, s=5, color="blue", label="original")
             plt.plot(x_ax, predictions, lw=0.8, color="red", label="predicted")
             plt.legend()
+
+            Path(basedir, plot_url).mkdir(parents=True, exist_ok=True)
             plt.savefig(os.path.join(basedir, plot_url, 'linear-actual-predicted.png'),
                         dpi=300, bbox_inches='tight', pad_inches=0.2)
             # SAVE HISTORY
@@ -961,6 +963,8 @@ def pipeline_detail_predict(id):
             df_cm.columns.name = "Predicted"
             plt.figure(figsize=(6,5))
             sns.heatmap(df_cm, annot=True, fmt="d", cmap="Blues")
+
+            Path(basedir, plot_url).mkdir(parents=True, exist_ok=True)
             plt.savefig(os.path.join(basedir, plot_url, 'confusion_matrix.png'),
                         dpi=300, bbox_inches='tight', pad_inches=0.2)
 
