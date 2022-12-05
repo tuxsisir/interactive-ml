@@ -20,7 +20,7 @@ class User(UserMixin, db.Model):
     projects = db.relationship('MLProject', backref='projects', lazy=True)
 
     def __repr__(self):
-        return '<User %r> %d' % self.username, self.id
+        return f'<User {self.username} - {self.id}>'
 
 
 class OAuth(OAuthConsumerMixin, db.Model):
