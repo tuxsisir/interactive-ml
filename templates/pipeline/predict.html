@@ -13,7 +13,7 @@
                 <div class="mb-3 row">
                   <label for="staticEmail" class="col-sm-2 col-form-label">{{ feature }}</label>
                   <div class="col-sm-10">
-                    <input type="text" name="{{ feature }}" value="" class="form-control">
+                    <input type="text" name="{{ feature }}" class="form-control">
                   </div>
                 </div>
               {% endfor %}
@@ -21,6 +21,11 @@
                 Predict
               </button>
             </form>
+            {% if learning == 'classification' %}
+              <hr class="my-4">
+              <h4>Confusion Matrix</h4>
+              <img src="{{ url_for('static', filename=plot_url) }}" height="400" width="400" style="margin: 0 auto; display: block;">
+            {% endif %}
           </div>
         </div>
         <div class="col-md-4">
@@ -29,7 +34,7 @@
               <div>
                 Based on the model <strong>{{ selected_model }}</strong>:<br>
                 The mentioned characteristics will have following possibility of prediction for predictor value ({{ predictor }}):
-                <h2 class="text-success">{{ predicted[0] }}</h2>
+                <h2 class="text-success">{{ '%0.2f'| format(predicted[0]|float) }}</h2>
               </div>
             {% else %}
               <div>
@@ -37,11 +42,37 @@
               </div>
             {% endif %}
           {% else %}
-            <h5 class="mb-3">Logistic Regression Classification</h5>
-            <span>Predictor: Healthy or not?</span>
-            <div class="d-flex align-items-center justify-content-center" style="height: 150px; width: 100%; background: green; color: white;">
-              <h1>YES</h1>
-            </div>
+            {% if predicted|length > 0 %}
+              <h5 class="mb-3">Classification based on: {{ selected_model }}</h5>
+              <span>Predictor: {{ predictor }}</span>
+              {% if predicted[0] == 1 %}
+                <div class="d-flex align-items-center justify-content-center" style="height: 150px; width: 100%; background: green; color: white;">
+                  <h1>YES</h1>
+                </div>
+              {% else %}
+                <div class="d-flex align-items-center justify-content-center" style="height: 150px; width: 100%; background: red; color: white;">
+                  <h1>NO</h1>
+                </div>
+              {% endif %}
+            {% else %}
+              <div>
+                <h5 class="text-danger text-center">Please apply values to predict classification.</h5>
+              </div>
+            {% endif %}
+            <hr>
+            <h5>Your Prediction History</h5>
+            <table class="table table-responsive table-bordered table-hover">
+              <tr>
+                <th>Features</th>
+                <th>Prediction</th>
+              </tr>
+              {% for index in range(classifier_model_values.history.features|length) %}
+                <tr>
+                  <td>{{ classifier_model_values.history.features[index ]}}</td>
+                  <td>{{ classifier_model_values.history.predicted[index ]}}</td>
+                </tr>
+              {% endfor %}
+            </table>
           {% endif %}
         </div>
       </div>

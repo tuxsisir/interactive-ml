@@ -21,6 +21,10 @@
         </div>
         {% elif correlation %}
           <img src="{{ url_for('static', filename=plot_url) }}" height="700" width="700" style="margin: 0 auto; display: block;">
+        {% elif pairplot %}
+          <img src="{{ url_for('static', filename=plot_url) }}" height="700" width="700" style="margin: 0 auto; display: block;">
+        {% elif boxplot %}
+          <img src="{{ url_for('static', filename=plot_url) }}" height="700" width="700" style="margin: 0 auto; display: block;">
         {% endif %}
       </div>
       <div class="col-md-3">
@@ -51,6 +55,18 @@
             <input class="form-check-input" type="radio" name="visualization" value="correlation" id="id_correlation" {% if correlation %}checked{% endif %}>
             <label class="form-check-label" for="id_correlation">
               Correlation
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="visualization" value="pairplot" id="id_pairplot" {% if pairplot %}checked{% endif %}>
+            <label class="form-check-label" for="id_pairplot">
+              Pairplot
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="visualization" value="boxplot" id="id_boxplot" {% if boxplot %}checked{% endif %}>
+            <label class="form-check-label" for="id_boxplot">
+              Boxplot
             </label>
           </div>
           <hr>

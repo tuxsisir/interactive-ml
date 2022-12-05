@@ -69,73 +69,23 @@
                 can strip down the features to handful important required features only.</p>
               <hr>
               {% if supervised_learning_task == 'classification' %}
-              <!--
-                <u class="d-block mb-4">Least no. of features from applied algorithms:</u>
-                <h6>Using SelectFromModel and LogisticRegression</h6>
-                <div class="d-flex align-items-center">
-                  <div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="final_features" id="using">
-                    </div>
-                  </div>
-                  <table class="table table-bordered">
-                    <thead>
-                      <tr>
-                        <th>feature 1</th>
-                        <th>feature 2</th>
-                        <th>feature 3</th>
-                        <th>feature 4</th>
-                        <th>feature 5</th>
-                        <th>feature 6</th>
-                      </tr>
-                    </thead>
-                  </table>
+                <hr>
+                <h4 class="text-center text-info">Please analyze and select features to continue to train model.</h4>
+                <div class="text-center">
+                  {% for col in columns %}
+                    {% if col != predictor %} {#  ignore predictor value to be shown on columns list #}
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" name="selected_features" id="id_{{ col }}" value="{{ col }}" {% if col in selected_features %} checked {% endif %}>
+                        <label class="form-check-label" for="id_{{ col }}">{{ col }}</label>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
                 </div>
-                <h6>Linear SVM</h6>
-                <div class="alert alert-success p-2" role="alert">
-                <strong>Recommended:</strong> Less features from Linear SVM compared to all other applied algorithms.
-                </div>
-                <div class="d-flex align-items-center">
-                  <div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="final_features" id="using">
-                    </div>
-                  </div>
-                  <table class="table table-bordered">
-                    <thead>
-                      <tr>
-                        <th>feature 1</th>
-                        <th>feature 2</th>
-                        <th>feature 3</th>
-                        <th>feature 4</th>
-                      </tr>
-                    </thead>
-                  </table>
-                </div>
-                <h6>SelectKBest</h6>
-                <div class="d-flex align-items-center">
-                  <div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="final_features" id="using">
-                    </div>
-                  </div>
-                  <table class="table table-bordered">
-                    <thead>
-                      <tr>
-                        <th>feature 1</th>
-                        <th>feature 2</th>
-                        <th>feature 3</th>
-                        <th>feature 4</th>
-                        <th>feature 5</th>
-                      </tr>
-                    </thead>
-                  </table>
-                </div>
-                -->
+                <div style="width: 900px; height: 500px;" id="myPieChart"></div>
               {% elif supervised_learning_task == 'regression' %}
                 {% if regressor_features|length > 0 %}
                   <hr>
-                  <h4 class="text-center">Please analyze and select features to continue to train model.</h4>
+                  <h4 class="text-center text-info">Please analyze and select features to continue to train model.</h4>
                   <div class="text-center">
                     {% for col in columns %}
                       {% if col != predictor %} {#  ignore predictor value to be shown on columns list #}
@@ -153,8 +103,7 @@
             <div class="col-md-4">
               <h5>Apply Feature Selection Using Following Algorithms</h5>
               {% if supervised_learning_task == 'classification' %}
-                {{ classifier_features }}
-              <!--
+                <!--
                 <div class="form-check">
                   <label class="form-check-label" for="flexRadioDefault1">
                     Using SelectFromModel and LogisticRegression
@@ -225,13 +174,21 @@
 
     function drawVisualization() {
       // Some raw data (not necessarily accurate)
-      var data = google.visualization.arrayToDataTable({{ regressor_features|safe }});
+      {% if regressor_features|length > 0 %}
+        var data = google.visualization.arrayToDataTable({{ regressor_features|safe }});
+      {% elif classifier_features|length > 0 %}
+        var data = google.visualization.arrayToDataTable({{ classifier_features|safe }});
+      {% endif %}
       var options = {
-        title : 'Score of individual features based on applied alogirthms',
+        title : 'Feature Importance of individual features based on applied alogirthms',
         vAxis: {title: 'Score (%)'},
         hAxis: {title: 'Algorithms'},
         seriesType: 'bars',
-        series: { {{ regressor_features[0]|length - 2 }}: {type: 'line'}}
+        {% if regressor_features|length > 0 %}
+          series: { {{ regressor_features[0]|length - 2 }}: {type: 'line'}}
+        {% elif classifier_features|length > 0 %}
+          series: { {{ classifier_features[0]|length - 2 }}: {type: 'line'}}
+        {% endif %}
       };
 
       var chart = new google.visualization.ComboChart(document.getElementById('myPieChart'));

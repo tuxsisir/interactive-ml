@@ -44,12 +44,12 @@
             {% endif %}
 
             {% if current_user.is_authenticated %}
-            <li class="nav-item">
-              <em>{{ current_user.username }}</em>
-              <img src="https://cdn-icons-png.flaticon.com/512/124/124021.png" class="rounded-circle"
-                                                                               style="width: 40px;" alt="{{ current_user.username }}" />
-            </li>
-            <!--
+              <li class="nav-item">
+                <em>{{ current_user.username }}</em>
+                <img src="https://cdn-icons-png.flaticon.com/512/124/124021.png" class="rounded-circle"
+                  style="width: 40px;" alt="{{ current_user.username }}" />
+              </li>
+              <!--
               <li class="nav-item">
                 <a class="nav-link" href="/logout">Logout</a>
               </li>
@@ -61,13 +61,16 @@
     </nav>
     <div class="container">
       {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-      {% for category, message in messages %}
-      <div class="alert alert-{{ category }} my-3" role="alert">
-        <span class="mx-2"><i class="icon bi-info-circle-fill mr-3"></i></span><span class="text-capitalize font-weight-bold">{% if category == 'danger' %}Error:{% endif %}</span> {{ message }}
-        </div>
-      {% endfor %}
-      {% endif %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div style="position: fixed; bottom: 10px; z-index: 99; right: 50px; width: 350px;" class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              <span class="text-capitalize font-weight-bold">
+                {% if category == 'danger' %}<i class="icon bi-exclamation-triangle-fill mr-3"></i>{% else %}<i class="icon bi-check-circle-fill mr-3"></i>{% endif %}
+              </span> {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
       {% endwith %}
       {% block content %}
       {% endblock %}
@@ -88,6 +91,13 @@
         </ul>
       </footer>
     </div>
+    <script>
+      $(document).ready(function() {
+        $(".alert").delay(4000).slideUp(200, function() {
+          $(this).alert('close');
+        });
+      });
+    </script>
     {% block js %}{% endblock js %}
   </body>
 </html>
