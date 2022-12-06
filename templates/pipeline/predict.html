@@ -87,7 +87,7 @@
               {% for index in range(classifier_model_values.history.features|length) %}
                 <tr>
                   <td>{{ classifier_model_values.history.features[index ]}}</td>
-                  <td>{{ classifier_model_values.history.predicted[index ]}}</td>
+                  <td>{% if classifier_model_values.history.predicted[index] == '0' %} No {% else %} Yes {% endif %}</td>
                 </tr>
               {% endfor %}
             </table>
