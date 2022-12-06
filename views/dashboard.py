@@ -133,7 +133,7 @@ def dashboard_upload():
 @dashboard_blueprint.route("/dashboard/history")
 @login_required
 def dashboard_history():
-    res = db.session.query(MLProject).order_by(
+    res = db.session.query(MLProject).filter_by(created_by=session['_user_id']).order_by(
         desc(MLProject.created_at)).all()
     return render_template(
         'dashboard/history.html',
